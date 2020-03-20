@@ -1,61 +1,140 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<title>Beneath the Waves</title>
-<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-<script src="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
-<link href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" rel="stylesheet" />
-<script src="https://d3js.org/d3.v5.min.js"></script>
-<style>
-	body { margin: 0; padding: 0; }
-	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
-</style>
+	<title>Beneath the Waves</title>
+	<script src="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+	<link href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" rel="stylesheet" />
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+	<script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
 </head>
+<style type="text/css">
+	#map {
+	    position:absolute;
+	    width: 100%;
+	    height: 100%;
+	}
+	svg {
+	    position: absolute;
+	    width: 100%;
+	    height: 100%;
+	}
+</style>
 <body>
-<div id="map"></div>
-
-<script>
-	mapboxgl.accessToken = 'pk.eyJ1IjoiYWczNzEzYSIsImEiOiJjazd1aG04MnUxYjU2M25rNWh5Nng2NmN6In0.4HUpNtdZx3kHM-dY4YY3GQ';
-var map = new mapboxgl.Map({
-container: 'map',
-style: 'mapbox://styles/mapbox/streets-v11',
-center: [-55.101, 37.877],
-zoom: 3,
-minZoom: 3,
-maxZoom: 5
-});
-
-map.on('load', function() {
-map.addSource('10m-bathymetry-81bsvj', {
-type: 'vector',
-url: 'mapbox://mapbox.9tm8dx88'
-});
-
-map.addLayer(
-{
-'id': '10m-bathymetry-81bsvj',
-'type': 'fill',
-'source': '10m-bathymetry-81bsvj',
-'source-layer': '10m-bathymetry-81bsvj',
-'layout': {},
-'paint': {
-'fill-outline-color': 'hsla(337, 82%, 62%, 0)',
-'fill-color': [
-'interpolate',
-['cubic-bezier', 0, 0.5, 1, 0.5],
-['get', 'DEPTH'],
-200,
-'#78bced',
-9000,
-'#15659f'
-]
-}
-},
-'land-structure-polygon'
-);
-});
-</script>
-
+	<hr>
+	<div id='map' style='width: 1000px; height: 800px;'></div>
 </body>
+
+	<script type="text/javascript">
+		mapboxgl.accessToken = 'pk.eyJ1IjoiYWczNzEzYSIsImEiOiJjazd1aG04MnUxYjU2M25rNWh5Nng2NmN6In0.4HUpNtdZx3kHM-dY4YY3GQ';
+
+		var map = new mapboxgl.Map({
+		container: 'map',
+		style: 'mapbox://styles/mapbox/streets-v11',
+		center: [-55.101, 37.877],
+		zoom: 3,
+		minZoom: 3,
+		maxZoom: 5
+		});
+		var canvas = map.getCanvasContainer();
+
+
+		var svg = d3.select(canvas).append("svg");
+		var g = svg.append("g");
+
+		var vertices =d3.map();
+
+		Promise.all([
+        d3.csv('BTW_Tracks_July31_19.csv')])
+    	.then(ready);
+
+
+		function ready(data){
+			var nodes = data[0];
+
+			var types = d3.nest()
+			.key(function(d){
+					return d.typ;
+			})
+			.entries(nodes)
+
+			.map(function(d){
+					return d.key;
+				})
+
+			nodes.forEach(function(d){
+
+					d.LngLat = [+d.Lon, +d.Lat];
+
+			})
+
+
+			map.addSource('10m-bathymetry-81bsvj', {
+			type: 'vector',
+			url: 'mapbox://mapbox.9tm8dx88'
+			});
+
+			map.addLayer(
+			{
+			'id': '10m-bathymetry-81bsvj',
+			'type': 'fill',
+			'source': '10m-bathymetry-81bsvj',
+			'source-layer': '10m-bathymetry-81bsvj',
+			'layout': {},
+			'paint': {
+			'fill-outline-color': 'hsla(337, 82%, 62%, 0)',
+			'fill-color': [
+			'interpolate',
+			['cubic-bezier', 0, 0.5, 1, 0.5],
+			['get', 'DEPTH'],
+			200,
+			'#78bced',
+			9000,
+			'#15659f'
+			]
+			}
+			},
+			'land-structure-polygon'
+			);
+				g.selectAll('US-node')
+						.classed("US-node",true)
+						.data(nodes)
+								 .enter().append('circle')
+								 .style("opacity", 0.6)
+								 .style("fill", "red")
+										.attr('r', 2)
+
+
+
+
+
+
+				map.on("viewreset", function(){
+	         updateNodes();
+	     	});
+		    map.on("movestart", function(){
+		    console.log("move started");
+						g.attr("visibility", "hidden");
+		     });
+		    map.on("moveend", function(){
+		        updateNodes();
+
+		        g.attr("visibility", "visible");
+		     });
+				updateNodes();
+		}
+
+
+		function updateNodes(){
+    console.log("update positions");
+    g.selectAll('circle')
+        .attr('cx', function(d){return project(d.LngLat).x})
+        .attr('cy', function(d){return project(d.LngLat).y});
+}
+
+		function project(d) {
+		    return map.project(new mapboxgl.LngLat(+d[0], +d[1]));
+		}
+
+
+	</script>
 </html>
