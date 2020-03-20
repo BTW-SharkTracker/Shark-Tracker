@@ -23,9 +23,11 @@
 	<hr>
 	<div id='map' style='width: 1000px; height: 800px;'></div>
 </body>
-
 	<script type="text/javascript">
+
 		mapboxgl.accessToken = 'pk.eyJ1IjoiYWczNzEzYSIsImEiOiJjazd1aG04MnUxYjU2M25rNWh5Nng2NmN6In0.4HUpNtdZx3kHM-dY4YY3GQ';
+
+
 
 		var map = new mapboxgl.Map({
 		container: 'map',
@@ -35,106 +37,53 @@
 		minZoom: 3,
 		maxZoom: 5
 		});
+
 		var canvas = map.getCanvasContainer();
 
+			map.on('load', function() {
+				map.addSource('10m-bathymetry-81bsvj', {
+				type: 'vector',
+				url: 'mapbox://mapbox.9tm8dx88'
+				});
 
-		var svg = d3.select(canvas).append("svg");
-		var g = svg.append("g");
+				map.addLayer(
+				{
+					'id': '10m-bathymetry-81bsvj',
+					'type': 'fill',
+					'source': '10m-bathymetry-81bsvj',
+					'source-layer': '10m-bathymetry-81bsvj',
+					'layout': {},
+					'paint': {
+					'fill-outline-color': 'hsla(337, 82%, 62%, 0)',
+					'fill-color': [
+						'interpolate',
+						['cubic-bezier', 0, 0.5, 1, 0.5],
+						['get', 'DEPTH'],
+						200,
+						'#78bced',
+						9000,
+						'#15659f'
+						]
+					}
+				},
+				'land-structure-polygon'
+				);
 
-		var vertices =d3.map();
+				map.addSource('Nodes', {
+					'type': 'geojson',
+					'data': 'tracks.geojson'
+				});
 
-		Promise.all([
-        d3.csv('BTW_Tracks_July31_19.csv')])
-    	.then(ready);
-
-
-		function ready(data){
-			var nodes = data[0];
-
-			var types = d3.nest()
-			.key(function(d){
-					return d.typ;
-			})
-			.entries(nodes)
-
-			.map(function(d){
-					return d.key;
-				})
-
-			nodes.forEach(function(d){
-
-					d.LngLat = [+d.Lon, +d.Lat];
-
-			})
-
-
-			map.addSource('10m-bathymetry-81bsvj', {
-			type: 'vector',
-			url: 'mapbox://mapbox.9tm8dx88'
+				map.addLayer({
+					'id': 'Nodes',
+					'type': 'circle',
+					'source': 'Nodes',
+					'paint': {
+						'circle-radius': 2,
+						'circle-color': '#B42222'
+						},
+				});
 			});
-
-			map.addLayer(
-			{
-			'id': '10m-bathymetry-81bsvj',
-			'type': 'fill',
-			'source': '10m-bathymetry-81bsvj',
-			'source-layer': '10m-bathymetry-81bsvj',
-			'layout': {},
-			'paint': {
-			'fill-outline-color': 'hsla(337, 82%, 62%, 0)',
-			'fill-color': [
-			'interpolate',
-			['cubic-bezier', 0, 0.5, 1, 0.5],
-			['get', 'DEPTH'],
-			200,
-			'#78bced',
-			9000,
-			'#15659f'
-			]
-			}
-			},
-			'land-structure-polygon'
-			);
-				g.selectAll('US-node')
-						.classed("US-node",true)
-						.data(nodes)
-								 .enter().append('circle')
-								 .style("opacity", 0.6)
-								 .style("fill", "red")
-										.attr('r', 2)
-
-
-
-
-
-
-				map.on("viewreset", function(){
-	         updateNodes();
-	     	});
-		    map.on("movestart", function(){
-		    console.log("move started");
-						g.attr("visibility", "hidden");
-		     });
-		    map.on("moveend", function(){
-		        updateNodes();
-
-		        g.attr("visibility", "visible");
-		     });
-				updateNodes();
-		}
-
-
-		function updateNodes(){
-    console.log("update positions");
-    g.selectAll('circle')
-        .attr('cx', function(d){return project(d.LngLat).x})
-        .attr('cy', function(d){return project(d.LngLat).y});
-}
-
-		function project(d) {
-		    return map.project(new mapboxgl.LngLat(+d[0], +d[1]));
-		}
 
 
 	</script>
-</html>
