@@ -34,11 +34,17 @@
 		style: 'mapbox://styles/mapbox/streets-v11',
 		center: [-55.101, 37.877],
 		zoom: 3,
-		minZoom: 3,
-		maxZoom: 5
+		minZoom: 2,
+		maxZoom: 8
 		});
 
 		var canvas = map.getCanvasContainer();
+
+		d3.csv('Metadata_Sharks_ToJuly31_19.csv')
+	    .then(function(data){
+	      console.log(data);
+	    })
+
 
 			map.on('load', function() {
 				map.addSource('10m-bathymetry-81bsvj', {
@@ -74,15 +80,62 @@
 					'data': 'tracks.geojson'
 				});
 
+
+				d3.json("tracks.geojson", function(error, data) {
+
+				    d3.csv("Metadata_Sharks_ToJuly31_19.csv", function(error, csv) {
+
+				        //var world = data.features;
+
+				        csv.forEach(function(d, i) {
+				            geojson.forEach(function(e, j) {
+
+											if (d['Shark ID'] === e['Shark ID']) {
+
+
+												//Commn Name	Species Name	TagType	Name	TagDay	TagMonth
+											//	TagYear	Total Length	Sex	Maturity	Track Color	Active?
+													e['Commn Name'] = d['Commn Name']
+													e['Species Name'] = d['Species Name']
+													e['Name'] = d['Name']
+
+
+												}
+
+				            })
+				        })
+								
+
+				    })
+
+				})
+
+
 				map.addLayer({
 					'id': 'Nodes',
 					'type': 'circle',
 					'source': 'Nodes',
 					'paint': {
 						'circle-radius': 2,
-						'circle-color': '#B42222'
+						'circle-color': [
+							'match',
+							['get', 'Species Name'],
+							'Prionace glauca',
+							'#1f77b4',
+							'Isurus oxyrinchus',
+							'#ff7f0e',
+							'Lamna nasus',
+							'#2ca02c',
+							'Galeocerdo cuvier',
+							'#d62728',
+							'Carcharhinus obscurus',
+							'#9467bd',
+							/* other */ '#2ca02c'
+						]
+
 						},
 				});
+
 			});
 
 
