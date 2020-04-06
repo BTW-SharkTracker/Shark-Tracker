@@ -2,8 +2,8 @@
 <html>
 <head>
 	<title>Beneath the Waves</title>
-	<script src="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
-	<link href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" rel="stylesheet" />
+	<script src="https://api.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.js"></script>
+	<link href="https://api.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.css" rel="stylesheet" />
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
 </head>
@@ -31,7 +31,7 @@
 
 		var map = new mapboxgl.Map({
 		container: 'map',
-		style: 'mapbox://styles/mapbox/streets-v11',
+		style: 'mapbox://styles/mapbox/dark-v10',
 		center: [-55.101, 37.877],
 		zoom: 3,
 		minZoom: 2,
@@ -40,10 +40,10 @@
 
 		var canvas = map.getCanvasContainer();
 
-		d3.csv('Metadata_Sharks_ToJuly31_19.csv')
-	    .then(function(data){
-	      console.log(data);
-	    })
+		// d3.csv('Metadata_Sharks_ToJuly31_19.csv')
+	    // .then(function(data){
+	    //   console.log(data);
+	    // })
 
 
 			map.on('load', function() {
@@ -66,9 +66,9 @@
 						['cubic-bezier', 0, 0.5, 1, 0.5],
 						['get', 'DEPTH'],
 						200,
-						'#78bced',
-						9000,
-						'#15659f'
+							'#002c47',
+							9000,
+							'#00131f'
 						]
 					}
 				},
@@ -77,38 +77,36 @@
 
 				map.addSource('Nodes', {
 					'type': 'geojson',
-					'data': 'tracks.geojson'
+					'data': 'tracksmeta.geojson'
 				});
 
+				// d3.json("tracks.geojson", function(error, data) {
 
-				d3.json("tracks.geojson", function(error, data) {
+				//     d3.csv("Metadata_Sharks_ToJuly31_19.csv", function(error, csv) {
 
-				    d3.csv("Metadata_Sharks_ToJuly31_19.csv", function(error, csv) {
+				//         //var world = data.features;
 
-				        //var world = data.features;
+				//         csv.forEach(function(d, i) {
+				//             geojson.forEach(function(e, j) {
 
-				        csv.forEach(function(d, i) {
-				            geojson.forEach(function(e, j) {
-
-											if (d['Shark ID'] === e['Shark ID']) {
-
-
-												//Commn Name	Species Name	TagType	Name	TagDay	TagMonth
-											//	TagYear	Total Length	Sex	Maturity	Track Color	Active?
-													e['Commn Name'] = d['Commn Name']
-													e['Species Name'] = d['Species Name']
-													e['Name'] = d['Name']
+				// 							if (d['Shark ID'] === e['Shark ID']) {
 
 
-												}
+				// 								//Commn Name	Species Name	TagType	Name	TagDay	TagMonth
+				// 							//	TagYear	Total Length	Sex	Maturity	Track Color	Active?
+				// 									e['Commn Name'] = d['Commn Name']
+				// 									e['Species Name'] = d['Species Name']
+				// 									e['Name'] = d['Name']
 
-				            })
-				        })
+
+				// 								}
+
+				//             })
+				//         })
 								
 
-				    })
-
-				})
+				//     })
+				// })
 
 
 				map.addLayer({
