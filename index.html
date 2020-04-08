@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 	<title>Beneath the Waves</title>
 	<script src="https://api.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.js"></script>
 	<link href="https://api.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.css" rel="stylesheet" />
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+
 </head>
 <style type="text/css">
 	#map {
@@ -21,7 +23,13 @@
 </style>
 <body>
 	<hr>
-	<div id='map' style='width: 1000px; height: 800px;'></div>
+	<style>
+	.mapboxgl-popup {
+		max-width:400px;
+		font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+		}
+</style>
+	<div id='map' style='width: 1000px; height: 600px;'></div>
 </body>
 	<script type="text/javascript">
 
@@ -38,13 +46,8 @@
 		maxZoom: 8
 		});
 
+
 		var canvas = map.getCanvasContainer();
-
-		// d3.csv('Metadata_Sharks_ToJuly31_19.csv')
-	    // .then(function(data){
-	    //   console.log(data);
-	    // })
-
 
 			map.on('load', function() {
 				map.addSource('10m-bathymetry-81bsvj', {
@@ -80,33 +83,7 @@
 					'data': 'tracksmeta.geojson'
 				});
 
-				// d3.json("tracks.geojson", function(error, data) {
 
-				//     d3.csv("Metadata_Sharks_ToJuly31_19.csv", function(error, csv) {
-
-				//         //var world = data.features;
-
-				//         csv.forEach(function(d, i) {
-				//             geojson.forEach(function(e, j) {
-
-				// 							if (d['Shark ID'] === e['Shark ID']) {
-
-
-				// 								//Commn Name	Species Name	TagType	Name	TagDay	TagMonth
-				// 							//	TagYear	Total Length	Sex	Maturity	Track Color	Active?
-				// 									e['Commn Name'] = d['Commn Name']
-				// 									e['Species Name'] = d['Species Name']
-				// 									e['Name'] = d['Name']
-
-
-				// 								}
-
-				//             })
-				//         })
-								
-
-				//     })
-				// })
 
 
 				map.addLayer({
@@ -129,9 +106,29 @@
 							'Carcharhinus obscurus',
 							'#9467bd',
 							/* other */ '#2ca02c'
-						]
+						]}
+				});
+				
+				map.on('click', function (e) {
+				    var features = map.queryRenderedFeatures(e.point, { layers: ['Nodes'] });
 
-						},
+				    if (!features.length) {
+				        return;
+				    }
+
+				    var feature = features[0];
+				    var popup = new mapboxgl.Popup()
+				        .setLngLat(feature.geometry.coordinates)
+				        .setHTML('<h3><p>' +feature.properties['Name']+"</h3> "+"<h4>Common Name:</h4>"+feature.properties['Commn Name']+
+								"</p><h4>Species: </h4>"+feature.properties['Species Name']
+								+"<br/><h4>Date: </h4>"+feature.properties['Date'])
+				        .addTo(map);
+				});
+
+
+				map.on('mousemove', function (e) {
+				    var features = map.queryRenderedFeatures(e.point, { layers: ['Nodes'] });
+				    map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
 				});
 
 			});
