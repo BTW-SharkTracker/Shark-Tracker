@@ -28,14 +28,14 @@
 		max-width:400px;
 		font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
 		}
+
 </style>
-	<div id='map' style='width: 1000px; height: 600px;'></div>
-</body>
+	<div id='map' style='width: 1400px; height: 650px;'></div>
+
+	</body>
 	<script type="text/javascript">
 
 		mapboxgl.accessToken = 'pk.eyJ1IjoiYWczNzEzYSIsImEiOiJjazd1aG04MnUxYjU2M25rNWh5Nng2NmN6In0.4HUpNtdZx3kHM-dY4YY3GQ';
-
-
 
 		var map = new mapboxgl.Map({
 		container: 'map',
@@ -45,11 +45,18 @@
 		minZoom: 2,
 		maxZoom: 8
 		});
+		var months = [
+			'8/26/16',
+			'8/27/16',
+			'8/28/1',
+			'8/29/1',
+			];
 
 
 		var canvas = map.getCanvasContainer();
 
 			map.on('load', function() {
+
 				map.addSource('10m-bathymetry-81bsvj', {
 				type: 'vector',
 				url: 'mapbox://mapbox.9tm8dx88'
@@ -106,9 +113,15 @@
 							'Carcharhinus obscurus',
 							'#9467bd',
 							/* other */ '#2ca02c'
-						]}
+						]},
+						//filter out points based on data quality
+							"filter":["any",
+								["all", ["==","Commn Name","Tiger"],
+								["any",["==","Class","A"],["==","Class","B"]]],
+								["==","Class","0"],["==","Class","1"],
+								["==","Class","2"],["==","Class","3"]]
 				});
-				
+				//generate pop-up when a node is clicked on
 				map.on('click', function (e) {
 				    var features = map.queryRenderedFeatures(e.point, { layers: ['Nodes'] });
 
@@ -130,6 +143,8 @@
 				    var features = map.queryRenderedFeatures(e.point, { layers: ['Nodes'] });
 				    map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
 				});
+				//filterBy(0);
+
 
 			});
 
