@@ -30,10 +30,41 @@
 		}
 
 </style>
+
+	<!-- Checkboxes to select which shark species are shown -->
+	<input type="checkbox" id="all" onclick="allbtn()">
+	<label for="all">All Sharks</label><br>
+	<input type="checkbox" id="blue" onclick="bluebtn()">
+	<label for="blue">Blue Sharks</label><br>
+	<input type="checkbox" id="mako" onclick="makobtn()">
+	<label for="mako">Shortfin Mako Sharks</label><br>
+	<input type="checkbox" id="porbeagle" onclick="porbeaglebtn()">
+	<label for="porbeagle">Porbeagle Sharks</label><br>
+	<input type="checkbox" id="dusky" onclick="duskybtn()">
+	<label for="dusky">Dusky Sharks</label><br>
+	<input type="checkbox" id="tiger" onclick="tigerbtn()">
+	<label for="tiger">Tiger Sharks</label><br>
+
 	<div id='map' style='width: 1400px; height: 650px;'></div>
 
 	</body>
 	<script type="text/javascript">
+
+	// Variable holding the filters
+	var Filters = ["any", ["all", ["==","Commn Name","Tiger"], ["any",["==","Class","A"],["==","Class","B"]]], ["==","Class","0"],["==","Class","1"],["==","Class","2"],["==","Class","3"]];
+
+	// Variables of whether a checkbox is checked, and where in the filter array it is (maybe not the best way to do this?)
+	var allOn = true;
+	var blueOn = false;
+	var blueLoc = 0;
+	var makoOn = false;
+	var makoLoc = 0;
+	var porbeagleOn = false;
+	var porbeagleLoc = 0;
+	var duskyOn = false;
+	var duskyLoc = 0;
+	var tigersOn = false;
+	var tigersLoc = 0;
 
 		mapboxgl.accessToken = 'pk.eyJ1IjoiYWczNzEzYSIsImEiOiJjazd1aG04MnUxYjU2M25rNWh5Nng2NmN6In0.4HUpNtdZx3kHM-dY4YY3GQ';
 
@@ -54,6 +85,7 @@
 
 
 		var canvas = map.getCanvasContainer();
+
 
 			map.on('load', function() {
 
@@ -90,9 +122,6 @@
 					'data': 'tracksmeta.geojson'
 				});
 
-
-
-
 				map.addLayer({
 					'id': 'Nodes',
 					'type': 'circle',
@@ -113,13 +142,10 @@
 							'Carcharhinus obscurus',
 							'#9467bd',
 							/* other */ '#2ca02c'
-						]},
+						]
+						},
 						//filter out points based on data quality
-							"filter":["any",
-								["all", ["==","Commn Name","Tiger"],
-								["any",["==","Class","A"],["==","Class","B"]]],
-								["==","Class","0"],["==","Class","1"],
-								["==","Class","2"],["==","Class","3"]]
+							"filter": Filters
 				});
 				//generate pop-up when a node is clicked on
 				map.on('click', function (e) {
@@ -147,6 +173,57 @@
 
 
 			});
+
+
+			// Functions that run when a checkbox is clicked
+
+			// This function tries, if button is already checked, to remove the tiger filter from the filters list and then set the filter back
+			// IF the button isn't checked, it tries to append on the filter
+			// There's something that isn't quite right though, and I'm confused about what it is at the moment.
+			function tigerbtn() {
+				if (tigersOn) {
+					Filters.splice(tigersLoc);
+					map.setFilter('Nodes', Filters);
+					tigersOn = false;
+				} else {
+					Filters.push(["==","Species Name", 'Galeocerdo cuvier']);
+					map.setFilter('Nodes', Filters);
+					tigersOn = true;
+					tigersLoc = Filters.length=1;
+					console.log(Filters);
+				}
+			}
+
+			function bluebtn() {
+				if (blueOn) {
+					Filters.splice(blueLoc);
+					map.setFilter('Nodes', Filters);
+					tigersOn = false;
+				} else {
+					Filters.push(["==","Species Name", 'Prionace glauca']);
+					map.setFilter('Nodes', Filters);
+					blueOn = true;
+					blueLoc = Filters.length=1;
+					console.log(Filters);
+				}
+			}
+
+			// These are just the simple first try only set the new filter things
+			function makobtn() {
+				map.setFilter('Nodes', ["==","Species Name", 'Isurus oxyrinchus']);
+			}
+
+			function porbeaglebtn() {
+				map.setFilter('Nodes', ["==","Species Name", 'Lamna nasus']);
+			}
+
+			function duskybtn() {
+				map.setFilter('Nodes', ["==","Species Name", 'Carcharhinus obscurus']);
+			}
+
+			function allbtn() {
+				map.setFilter('Nodes');
+			}
 
 
 	</script>
