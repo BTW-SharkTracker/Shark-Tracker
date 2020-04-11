@@ -16,5 +16,5 @@ Milestone 4: Status Update
             4/17: Animation, UI
             4/17-4/20: Troubleshooting/Final Revisions
             4/21: Class Milestone 5, Final Product & Presentation
-    - We are relatively on schedule currently. We have the bathysphere data, nodes, and some degree of filtering in place.
+    - We are relatively on schedule currently. We have the bathysphere data, nodes, and some degree of filtering in place. We initially planned on having the links done by now, but filtering the nodes took longer than expected. Our next steps are continuing to work with filtering the nodes, especially from land, as well as adding links and updating the overall appearance.
     - We do still need to add in links and get the filtering working better than it is currently.
