@@ -3,85 +3,31 @@
 <head>
 	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 	<title>Beneath the Waves</title>
+	<link rel="stylesheet" href="styles.css">
 	<script src="https://api.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.js"></script>
 	<link href="https://api.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.css" rel="stylesheet" />
-	<link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Montserrat">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
 
 </head>
-<style type="text/css">
 
-#map {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-}
-
-h1 {
-
-	font-family: 'Montserrat', sans-serif;
-  font-size: 35px;
-  line-height: 30px;
-	font-weight: lighter;
-	text-align: center;
-	color: white;
-}
-
-h2 {
-  font-size: 14px;
-  line-height: 20px;
-  margin-bottom: 10px;
-}
-
-a {
-  text-decoration: none;
-  color: #2dc4b2;
-}
-
-#console {
-	position: fixed;
-	top: 0;
-  left: 30;
-  width: 1400px;
-	margin:auto;
-  background-color: #97b4c2;
-}
-.session {
-  margin-bottom: 20px;
-}
-
-.label {
-  width: 7%;
-  display: inline-block;
-  text-align: center;
-}
-</style>
 <body>
-	<hr>
-	<style>
-	.mapboxgl-popup {
-		max-width:400px;
-		font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-		}
-
-</style>
-
 	<!-- Checkboxes to select which shark species are shown -->
-	<input type="checkbox" id="all" onclick="allbtn()">
-	<label for="all">All Sharks</label><br>
-	<input type="checkbox" id="blue" onclick="bluebtn()">
-	<label for="blue">Blue Sharks</label><br>
-	<input type="checkbox" id="mako" onclick="makobtn()">
-	<label for="mako">Shortfin Mako Sharks</label><br>
-	<input type="checkbox" id="porbeagle" onclick="porbeaglebtn()">
-	<label for="porbeagle">Porbeagle Sharks</label><br>
-	<input type="checkbox" id="dusky" onclick="duskybtn()">
-	<label for="dusky">Dusky Sharks</label><br>
-	<input type="checkbox" id="tiger" onclick="tigerbtn()">
-	<label for="tiger">Tiger Sharks</label><br>
+	<div class="checkboxes">
+		<input type="checkbox" id="all" onclick="allbtn()">
+		<label for="all">All Sharks</label><br>
+		<input type="checkbox" id="blue" onclick="bluebtn()">
+		<label for="blue">Blue Sharks</label><br>
+		<input type="checkbox" id="mako" onclick="makobtn()">
+		<label for="mako">Shortfin Mako Sharks</label><br>
+		<input type="checkbox" id="porbeagle" onclick="porbeaglebtn()">
+		<label for="porbeagle">Porbeagle Sharks</label><br>
+		<input type="checkbox" id="dusky" onclick="duskybtn()">
+		<label for="dusky">Dusky Sharks</label><br>
+		<input type="checkbox" id="tiger" onclick="tigerbtn()">
+		<label for="tiger">Tiger Sharks</label><br>
+	</div>
 
 	<div id='map' style='width: 1400px; height: 650px;'></div>
 	<div id='console'>

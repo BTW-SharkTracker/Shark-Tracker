@@ -1,0 +1,54 @@
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  h1 {
+      font-family: 'Montserrat', sans-serif;
+        font-size: 35px;
+        line-height: 30px;
+      font-weight: lighter;
+      text-align: center;
+      color: white;
+  }
+  
+  h2 {
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 10px;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #2dc4b2;
+  }
+  
+  #console {
+      position: fixed;
+      top: 0;
+        left: 30;
+        width: 1400px;
+      margin:auto;
+        background-color: #97b4c2;
+  }
+  .session {
+    margin-bottom: 20px;
+  }
+  
+  .label {
+    width: 7%;
+    display: inline-block;
+    text-align: center;
+  }
+  
+  /* Lazy and quick make sure it's not hidden styling, should change later */
+  .checkboxes {
+      margin-top: 650px;
+  }
+  
+  .mapboxgl-popup {
+      max-width:400px;
+      font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  }
