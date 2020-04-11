@@ -5,21 +5,59 @@
 	<title>Beneath the Waves</title>
 	<script src="https://api.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.js"></script>
 	<link href="https://api.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.css" rel="stylesheet" />
+	<link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Montserrat">
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
 
 </head>
 <style type="text/css">
-	#map {
-	    position:absolute;
-	    width: 100%;
-	    height: 100%;
-	}
-	svg {
-	    position: absolute;
-	    width: 100%;
-	    height: 100%;
-	}
+
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+h1 {
+
+	font-family: 'Montserrat', sans-serif;
+  font-size: 35px;
+  line-height: 30px;
+	font-weight: lighter;
+	text-align: center;
+	color: white;
+}
+
+h2 {
+  font-size: 14px;
+  line-height: 20px;
+  margin-bottom: 10px;
+}
+
+a {
+  text-decoration: none;
+  color: #2dc4b2;
+}
+
+#console {
+	position: fixed;
+	top: 0;
+  left: 30;
+  width: 1400px;
+	margin:auto;
+  background-color: #97b4c2;
+}
+.session {
+  margin-bottom: 20px;
+}
+
+.label {
+  width: 7%;
+  display: inline-block;
+  text-align: center;
+}
 </style>
 <body>
 	<hr>
@@ -46,6 +84,9 @@
 	<label for="tiger">Tiger Sharks</label><br>
 
 	<div id='map' style='width: 1400px; height: 650px;'></div>
+	<div id='console'>
+  <h1>Beneath the Waves</h1>
+</div>
 
 	</body>
 	<script type="text/javascript">
@@ -76,12 +117,6 @@
 		minZoom: 3,
 		maxZoom: 6
 		});
-		var months = [
-			'8/26/16',
-			'8/27/16',
-			'8/28/1',
-			'8/29/1',
-			];
 
 
 		var canvas = map.getCanvasContainer();
@@ -147,6 +182,10 @@
 						//filter out points based on data quality
 							"filter": Filters
 				});
+
+
+				 // map.setFilter('Nodes', ['==', "Date", "8/27/16 0:00"]);
+
 				//generate pop-up when a node is clicked on
 				map.on('click', function (e) {
 				    var features = map.queryRenderedFeatures(e.point, { layers: ['Nodes'] });
@@ -169,7 +208,6 @@
 				    var features = map.queryRenderedFeatures(e.point, { layers: ['Nodes'] });
 				    map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
 				});
-				//filterBy(0);
 
 
 			});
