@@ -1,60 +1,131 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Beneath the Waves</title>
-	<link rel="stylesheet" href="styles.css">
 	<script src="https://api.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.js"></script>
 	<link href="https://api.mapbox.com/mapbox-gl-js/v1.9.0/mapbox-gl.css" rel="stylesheet" />
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+	<link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Montserrat">
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
 
 </head>
+<style type="text/css">
+body { margin: 0; padding: 0; }
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
 
+h1 {
+
+	font-family: 'Montserrat', sans-serif;
+  font-size: 35px;
+  line-height: 30px;
+	font-weight: lighter;
+	text-align: center;
+	color: white;
+}
+
+h2 {
+  font-size: 14px;
+  line-height: 20px;
+  margin-bottom: 10px;
+}
+
+a {
+  text-decoration: none;
+  color: #2dc4b2;
+}
+
+#console {
+	position: fixed;
+	top: 0;
+  left: 30;
+  width: 1400px;
+	margin:auto;
+  background-color: #97b4c2;
+}
+.session {
+  margin-bottom: 20px;
+}
+
+.label {
+  width: 7%;
+  display: inline-block;
+  text-align: center;
+}
+
+.mapboxgl-popup {
+	max-width:400px;
+	font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	}
+	.filter-group {
+	font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	font-weight: 600;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 1;
+	border-radius: 3px;
+	width: 120px;
+	color: #fff;
+	}
+
+	.filter-group input[type='checkbox']:first-child + label {
+	border-radius: 3px 3px 0 0;
+	}
+
+	.filter-group label:last-child {
+	border-radius: 0 0 3px 3px;
+	border: none;
+	}
+
+	.filter-group input[type='checkbox'] {
+	display: none;
+	}
+
+	.filter-group input[type='checkbox'] + label {
+	background-color: #3386c0;
+	display: block;
+	cursor: pointer;
+	padding: 10px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+	}
+
+	.filter-group input[type='checkbox'] + label {
+	background-color: #3386c0;
+	text-transform: capitalize;
+	}
+
+	.filter-group input[type='checkbox'] + label:hover,
+	.filter-group input[type='checkbox']:checked + label {
+	background-color: #4ea0da;
+	}
+
+	.filter-group input[type='checkbox']:checked + label:before {
+	content: 'X';
+	margin-right: 5px;
+	}
+
+
+</style>
 <body>
-	<!-- Checkboxes to select which shark species are shown -->
-	<div class="checkboxes">
-		<input type="checkbox" id="all" onclick="allbtn()">
-		<label for="all">All Sharks</label><br>
-		<input type="checkbox" id="blue" onclick="bluebtn()">
-		<label for="blue">Blue Sharks</label><br>
-		<input type="checkbox" id="mako" onclick="makobtn()">
-		<label for="mako">Shortfin Mako Sharks</label><br>
-		<input type="checkbox" id="porbeagle" onclick="porbeaglebtn()">
-		<label for="porbeagle">Porbeagle Sharks</label><br>
-		<input type="checkbox" id="dusky" onclick="duskybtn()">
-		<label for="dusky">Dusky Sharks</label><br>
-		<input type="checkbox" id="tiger" onclick="tigerbtn()">
-		<label for="tiger">Tiger Sharks</label><br>
-	</div>
 
-	<div id='map' style='width: 1400px; height: 650px;'></div>
-	<div id='console'>
-  <h1>Beneath the Waves</h1>
+<div id='map' style='width: 1400px; height: 650px;'></div>
+<div id='console'>
+	<h1>Beneath the Waves</h1>
 </div>
+<nav id="filter-group" class="filter-group"></nav>
 
-	</body>
+</body>
 	<script type="text/javascript">
 
-	// Variable holding the filters
-	var Filters = ["any", ["all", ["==","Commn Name","Tiger"], ["any",["==","Class","A"],["==","Class","B"]]], ["==","Class","0"],["==","Class","1"],["==","Class","2"],["==","Class","3"]];
-
-	// Variables of whether a checkbox is checked, and where in the filter array it is (maybe not the best way to do this?)
-	var allOn = true;
-	var blueOn = false;
-	var blueLoc = 0;
-	var makoOn = false;
-	var makoLoc = 0;
-	var porbeagleOn = false;
-	var porbeagleLoc = 0;
-	var duskyOn = false;
-	var duskyLoc = 0;
-	var tigersOn = false;
-	var tigersLoc = 0;
-
 		mapboxgl.accessToken = 'pk.eyJ1IjoiYWczNzEzYSIsImEiOiJjazd1aG04MnUxYjU2M25rNWh5Nng2NmN6In0.4HUpNtdZx3kHM-dY4YY3GQ';
-
+		var filterGroup = document.getElementById('filter-group');
 		var map = new mapboxgl.Map({
 		container: 'map',
 		style: 'mapbox://styles/mapbox/dark-v10',
@@ -66,7 +137,6 @@
 
 
 		var canvas = map.getCanvasContainer();
-
 
 			map.on('load', function() {
 
@@ -103,38 +173,191 @@
 					'data': 'tracksmeta.geojson'
 				});
 
+
 				map.addLayer({
-					'id': 'Nodes',
+					'id': 'pg',
 					'type': 'circle',
 					'source': 'Nodes',
 					'paint': {
 						'circle-radius': 2,
-						'circle-color': [
-							'match',
-							['get', 'Species Name'],
-							'Prionace glauca',
-							'#1f77b4',
-							'Isurus oxyrinchus',
-							'#ff7f0e',
-							'Lamna nasus',
-							'#2ca02c',
-							'Galeocerdo cuvier',
-							'#d62728',
-							'Carcharhinus obscurus',
-							'#9467bd',
-							/* other */ '#2ca02c'
-						]
-						},
+						'circle-color': '#1f77b4'},
 						//filter out points based on data quality
-							"filter": Filters
+							"filter":["all", ["==","Species Name","Prionace glauca"],
+								["any",
+								["==","Class","0"],
+								["==","Class","1"],
+								["==","Class","2"],
+								["==","Class","3"]]]
 				});
+					map.addLayer({
+						'id': 'iox',
+						'type': 'circle',
+						'source': 'Nodes',
+						'paint': {
+							'circle-radius': 2,
+							'circle-color': '#ff7f0e'},
+							//filter out points based on data quality
+								"filter":["all", ["==","Species Name","Isurus oxyrinchus"],
+									["any",
+									["==","Class","0"],
+									["==","Class","1"],
+									["==","Class","2"],
+									["==","Class","3"]]]
+					});
+					map.addLayer({
+						'id': 'ln',
+						'type': 'circle',
+						'source': 'Nodes',
+						'paint': {
+							'circle-radius': 2,
+							'circle-color': '#2ca02c'},
+							//filter out points based on data quality
+								"filter":["all", ["==","Species Name","Lamna nasus"],
+									["any",
+									["==","Class","0"],
+									["==","Class","1"],
+									["==","Class","2"],
+									["==","Class","3"]]]
+					});
+					map.addLayer({
+						'id': 'gc',
+						'type': 'circle',
+						'source': 'Nodes',
+						'paint': {
+							'circle-radius': 2,
+							'circle-color': '#d62728'},
+							//filter out points based on data quality
+								"filter":["all", ["==","Species Name","Galeocerdo cuvier"],
+									["any",
+									["==","Class","A"],
+									["==","Class","B"],
+									["==","Class","0"],
+									["==","Class","1"],
+									["==","Class","2"],
+									["==","Class","3"]]]
+					});
+					map.addLayer({
+						'id': 'co',
+						'type': 'circle',
+						'source': 'Nodes',
+						'paint': {
+							'circle-radius': 2,
+							'circle-color': '#9467bd'},
+							//filter out points based on data quality
+								"filter":["all", ["==","Species Name","Carcharhinus obscuru"],
+									["any",
+									["==","Class","0"],
+									["==","Class","1"],
+									["==","Class","2"],
+									["==","Class","3"]]]
+					});
+
+					var inputGC = document.createElement('input');
+						inputGC.type = 'checkbox';
+						inputGC.id = "gc";
+						inputGC.checked = true;
+						filterGroup.appendChild(inputGC);
+
+						var labelGC = document.createElement('label');
+						labelGC.setAttribute('for', "gc");
+						labelGC.textContent = "Galeocerdo cuvier";
+						filterGroup.appendChild(labelGC);
+
+						// When the checkbox changes, update the visibility of the layer.
+						inputGC.addEventListener('change', function(e) {
+						map.setLayoutProperty(
+						"gc",
+						'visibility',
+						e.target.checked ? 'visible' : 'none'
+						);
+						});
+
+					var inputLN = document.createElement('input');
+						inputLN.type = 'checkbox';
+						inputLN.id = "ln";
+						inputLN.checked = true;
+						filterGroup.appendChild(inputLN);
+
+						var labelLN = document.createElement('label');
+						labelLN.setAttribute('for', "ln");
+						labelLN.textContent = "Lamna nasus";
+						filterGroup.appendChild(labelLN);
+
+						// When the checkbox changes, update the visibility of the layer.
+						inputLN.addEventListener('change', function(e) {
+						map.setLayoutProperty(
+						"ln",
+						'visibility',
+						e.target.checked ? 'visible' : 'none'
+						);
+						});
+
+					var inputIOX = document.createElement('input');
+						inputIOX.type = 'checkbox';
+						inputIOX.id = "iox";
+						inputIOX.checked = true;
+						filterGroup.appendChild(inputIOX);
+
+						var labelIOX = document.createElement('label');
+						labelIOX.setAttribute('for', "iox");
+						labelIOX.textContent = "Isurus oxyrinchus";
+						filterGroup.appendChild(labelIOX);
+
+						// When the checkbox changes, update the visibility of the layer.
+						inputIOX.addEventListener('change', function(e) {
+						map.setLayoutProperty(
+						"iox",
+						'visibility',
+						e.target.checked ? 'visible' : 'none'
+						);
+						});
+
+					var inputCO = document.createElement('input');
+						inputCO.type = 'checkbox';
+						inputCO.id = "co";
+						inputCO.checked = true;
+						filterGroup.appendChild(inputCO);
+
+						var labelCO = document.createElement('label');
+						labelCO.setAttribute('for', "co");
+						labelCO.textContent = "Carcharhinus obscuru";
+						filterGroup.appendChild(labelCO);
+
+						// When the checkbox changes, update the visibility of the layer.
+						inputCO.addEventListener('change', function(e) {
+						map.setLayoutProperty(
+						"co",
+						'visibility',
+						e.target.checked ? 'visible' : 'none'
+						);
+						});
 
 
-				 // map.setFilter('Nodes', ['==', "Date", "8/27/16 0:00"]);
+					var inputpg = document.createElement('input');
+						inputpg.type = 'checkbox';
+						inputpg.id = "pg";
+						inputpg.checked = true;
+						filterGroup.appendChild(inputpg);
+
+						var labelpg = document.createElement('label');
+						labelpg.setAttribute('for', "pg");
+						labelpg.textContent = "Prionace glauca";
+						filterGroup.appendChild(labelpg);
+
+						// When the checkbox changes, update the visibility of the layer.
+						inputpg.addEventListener('change', function(e) {
+						map.setLayoutProperty(
+						"pg",
+						'visibility',
+						e.target.checked ? 'visible' : 'none'
+						);
+						});
+
+
 
 				//generate pop-up when a node is clicked on
 				map.on('click', function (e) {
-				    var features = map.queryRenderedFeatures(e.point, { layers: ['Nodes'] });
+				    var features = map.queryRenderedFeatures(e.point, { layers: ['pg'] });
 
 				    if (!features.length) {
 				        return;
@@ -151,63 +374,12 @@
 
 
 				map.on('mousemove', function (e) {
-				    var features = map.queryRenderedFeatures(e.point, { layers: ['Nodes'] });
+				    var features = map.queryRenderedFeatures(e.point, { layers: ['pg','co','iox','gc','ln' ]});
 				    map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
 				});
 
 
 			});
-
-
-			// Functions that run when a checkbox is clicked
-
-			// This function tries, if button is already checked, to remove the tiger filter from the filters list and then set the filter back
-			// IF the button isn't checked, it tries to append on the filter
-			// There's something that isn't quite right though, and I'm confused about what it is at the moment.
-			function tigerbtn() {
-				if (tigersOn) {
-					Filters.splice(tigersLoc);
-					map.setFilter('Nodes', Filters);
-					tigersOn = false;
-				} else {
-					Filters.push(["==","Species Name", 'Galeocerdo cuvier']);
-					map.setFilter('Nodes', Filters);
-					tigersOn = true;
-					tigersLoc = Filters.length=1;
-					console.log(Filters);
-				}
-			}
-
-			function bluebtn() {
-				if (blueOn) {
-					Filters.splice(blueLoc);
-					map.setFilter('Nodes', Filters);
-					tigersOn = false;
-				} else {
-					Filters.push(["==","Species Name", 'Prionace glauca']);
-					map.setFilter('Nodes', Filters);
-					blueOn = true;
-					blueLoc = Filters.length=1;
-					console.log(Filters);
-				}
-			}
-
-			// These are just the simple first try only set the new filter things
-			function makobtn() {
-				map.setFilter('Nodes', ["==","Species Name", 'Isurus oxyrinchus']);
-			}
-
-			function porbeaglebtn() {
-				map.setFilter('Nodes', ["==","Species Name", 'Lamna nasus']);
-			}
-
-			function duskybtn() {
-				map.setFilter('Nodes', ["==","Species Name", 'Carcharhinus obscurus']);
-			}
-
-			function allbtn() {
-				map.setFilter('Nodes');
-			}
 
 
 	</script>
