@@ -394,7 +394,7 @@
 						var feature = features[0];
 						var popup = new mapboxgl.Popup()
 							.setLngLat(feature.geometry.coordinates)
-							.setHTML('<h3><p>' +feature.properties['Name']+"</h3> "+"<h4>Common Name:</h4>"+feature.properties['Commn Name']+
+							.setHTML('<h3><p>' +feature.properties['Name']+"</h3> "+"<h4>Common Name:</h4>"+feature.properties['CommonName']+
 									"</p><h4>Species: </h4>"+feature.properties['Species']
 									+"<br/><h4>Date: </h4>"+feature.properties['Date'])
 							.addTo(map);
