@@ -53,8 +53,6 @@
 
 			function ready(data) {
 				var trackIterator;
-				// Previous position
-				var trackIterator2;
 				// Where we are in the new array
 				var trackPos;
 
@@ -122,20 +120,14 @@
 						trackPos = 0;
 					} else {
 							if (ptsWithin.features[trackIterator].properties["Shark ID"] == ptsWithin.features[trackIterator-1].properties["Shark ID"] ) {
-									lines.features.push({ "type": "Feature","geometry": {"type": "LineString","coordinates": []},"properties": {"Shark ID": null, "Date": null, "Date2": null}});
-									//console.log(lines.features[trackPos]);
-									if (typeof lines.features[trackPos] === 'undefined') {
-										//console.log('undefined!');
-									} else {
+									lines.features.push({ "type": "Feature","geometry": {"type": "LineString","coordinates": []},"properties": {"Shark ID": null, "Date": null, "Date2": null, "Species Name": null}});
 										lines.features[trackPos].geometry.coordinates.push(ptsWithin.features[trackIterator].geometry.coordinates);
 										lines.features[trackPos].geometry.coordinates.push(ptsWithin.features[trackIterator-1].geometry.coordinates);
 										lines.features[trackPos].properties["Shark ID"] = ptsWithin.features[trackIterator].properties["Shark ID"];
+										lines.features[trackPos].properties["Species"] = ptsWithin.features[trackIterator].properties["Species"];
 										lines.features[trackPos].properties.Date = ptsWithin.features[trackIterator-1].properties.Date;
 										lines.features[trackPos].properties.Date2 = ptsWithin.features[trackIterator].properties.Date;
 										trackPos++;
-								// 	}
-								// }
-							}
 						}
 					}
 				}
@@ -173,9 +165,6 @@
 					'land-structure-polygon'
 					);
 
-
-
-
 					map.addSource('Oceans', {
 						'type': 'geojson',
 						'data': 'oceans.json'
@@ -185,25 +174,31 @@
 							data: lines
 						});
 
-						map.addLayer({
-							'id': 'lines',
-							'type': 'line',
-							'source': 'lines',
-							'layout': {
-								'line-join': 'round',
-								'line-cap': 'round'
-							},
-							'paint': {
-								'line-color':"#ffffff",
-							'line-width': 1
-					}
-						});
+					map.addLayer({
+						'id': 'pgLines',
+						'type': 'line',
+						'source': 'lines',
+						'layout': {
+							'line-join': 'round',
+							'line-cap': 'round'
+						},
+						'paint': {
+							'line-color':"#003165",
+							'line-width': 1,
+						},
+						"filter": ["==", "Species","Prionace glauca"]
+					});
+
 					map.addLayer({
 						'id': 'pg',
 						'type': 'circle',
 						'source': 'Sharks',
 						'paint': {
-							'circle-radius': 2,
+							'circle-radius': [
+							'interpolate', ['linear'], ['zoom'],
+								3, 2,
+								6, 4,
+							],
 							'circle-color': '#1f77b4'},
 							//filter out points based on data quality
 								"filter":["all", ["==","Species","Prionace glauca"],
@@ -213,12 +208,32 @@
 									["==","Class","2"],
 									["==","Class","3"]]]
 					});
+
+					map.addLayer({
+						'id': 'ioxLines',
+						'type': 'line',
+						'source': 'lines',
+						'layout': {
+							'line-join': 'round',
+							'line-cap': 'round'
+						},
+						'paint': {
+							'line-color':"#9F3100",
+							'line-width': 1,
+						},
+						"filter": ["==", "Species","Isurus oxyrinchus"]
+					});
+
 						map.addLayer({
 							'id': 'iox',
 							'type': 'circle',
 							'source': 'Sharks',
 							'paint': {
-								'circle-radius': 2,
+								'circle-radius': [
+							'interpolate', ['linear'], ['zoom'],
+								3, 2,
+								6, 4,
+							],
 								'circle-color': '#ff7f0e'},
 								//filter out points based on data quality
 									"filter":["all", ["==","Species","Isurus oxyrinchus"],
@@ -228,12 +243,31 @@
 										["==","Class","2"],
 										["==","Class","3"]]]
 						});
+
+						map.addLayer({
+						'id': 'lnLines',
+						'type': 'line',
+						'source': 'lines',
+						'layout': {
+							'line-join': 'round',
+							'line-cap': 'round'
+						},
+						'paint': {
+							'line-color':"#005200",
+							'line-width': 1,
+						},
+						"filter": ["==", "Species","Lamna nasus"]
+					});
 						map.addLayer({
 							'id': 'ln',
 							'type': 'circle',
 							'source': 'Sharks',
 							'paint': {
-								'circle-radius': 2,
+								'circle-radius': [
+							'interpolate', ['linear'], ['zoom'],
+								3, 2,
+								6, 4,
+							],
 								'circle-color': '#2ca02c'},
 								//filter out points based on data quality
 									"filter":["all", ["==","Species","Lamna nasus"],
@@ -243,12 +277,31 @@
 										["==","Class","2"],
 										["==","Class","3"]]]
 						});
+
+						map.addLayer({
+						'id': 'gcLines',
+						'type': 'line',
+						'source': 'lines',
+						'layout': {
+							'line-join': 'round',
+							'line-cap': 'round'
+						},
+						'paint': {
+							'line-color':"#780000",
+							'line-width': 1,
+						},
+						"filter": ["==", "Species","Galeocerdo cuvier"]
+					});
 						map.addLayer({
 							'id': 'gc',
 							'type': 'circle',
 							'source': 'Sharks',
 							'paint': {
-								'circle-radius': 2,
+								'circle-radius': [
+							'interpolate', ['linear'], ['zoom'],
+								3, 2,
+								6, 4,
+							],
 								'circle-color': '#d62728'},
 								//filter out points based on data quality
 									"filter":["all", ["==","Species","Galeocerdo cuvier"],
@@ -260,12 +313,31 @@
 										["==","Class","2"],
 										["==","Class","3"]]]
 						});
+
+						map.addLayer({
+						'id': 'coLines',
+						'type': 'line',
+						'source': 'lines',
+						'layout': {
+							'line-join': 'round',
+							'line-cap': 'round'
+						},
+						'paint': {
+							'line-color':"#441E6D",
+							'line-width': 1,
+						},
+						"filter": ["==", "Species","Carcharhinus obscurus"]
+					});
 						map.addLayer({
 							'id': 'co',
 							'type': 'circle',
 							'source': 'Sharks',
 							'paint': {
-								'circle-radius': 2,
+								'circle-radius': [
+							'interpolate', ['linear'], ['zoom'],
+								3, 2,
+								6, 4,
+							],
 								'circle-color': '#9467bd'},
 								//filter out points based on data quality
 									"filter":["all", ["==","Species","Carcharhinus obscurus"],
@@ -295,6 +367,11 @@
 							'visibility',
 							e.target.checked ? 'visible' : 'none'
 							);
+							map.setLayoutProperty(
+							"gcLines",
+							'visibility',
+							e.target.checked ? 'visible' : 'none'
+							);
 							});
 
 						var inputLN = document.createElement('input');
@@ -312,6 +389,11 @@
 							inputLN.addEventListener('change', function(e) {
 							map.setLayoutProperty(
 							"ln",
+							'visibility',
+							e.target.checked ? 'visible' : 'none'
+							);
+							map.setLayoutProperty(
+							"lnLines",
 							'visibility',
 							e.target.checked ? 'visible' : 'none'
 							);
@@ -335,6 +417,11 @@
 							'visibility',
 							e.target.checked ? 'visible' : 'none'
 							);
+							map.setLayoutProperty(
+							"ioxLines",
+							'visibility',
+							e.target.checked ? 'visible' : 'none'
+							);
 							});
 
 						var inputCO = document.createElement('input');
@@ -352,6 +439,11 @@
 							inputCO.addEventListener('change', function(e) {
 							map.setLayoutProperty(
 							"co",
+							'visibility',
+							e.target.checked ? 'visible' : 'none'
+							);
+							map.setLayoutProperty(
+							"coLines",
 							'visibility',
 							e.target.checked ? 'visible' : 'none'
 							);
@@ -373,6 +465,11 @@
 							inputpg.addEventListener('change', function(e) {
 							map.setLayoutProperty(
 							"pg",
+							'visibility',
+							e.target.checked ? 'visible' : 'none'
+							);
+							map.setLayoutProperty(
+							"pgLines",
 							'visibility',
 							e.target.checked ? 'visible' : 'none'
 							);
