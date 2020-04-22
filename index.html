@@ -42,98 +42,98 @@
 		.setHTML('<p>Loading...</p><div class="loader"></div>')
 		.addTo(map);
 
-	// Create GeoJSON lines
-	var lines = {
-		"type":"FeatureCollection",
-		"features": []
-	};
+	// // Create GeoJSON lines
+	// var lines = {
+	// 	"type":"FeatureCollection",
+	// 	"features": []
+	// };
 
 	var canvas = map.getCanvasContainer();
 
 		map.on('load', function() {
-			Promise.all([
-				d3.csv('BTW_Tracks_July31_19.csv'),
-				d3.csv('Metadata_Sharks_ToJuly31_19.csv'),
-				d3.json('oceans.json')])
-			.then(ready);
+			// Promise.all([
+			// 	d3.csv('BTW_Tracks_July31_19.csv'),
+			// 	d3.csv('Metadata_Sharks_ToJuly31_19.csv'),
+			// 	d3.json('oceans.json')])
+			// .then(ready);
 
-			function ready(data) {
-				var trackIterator;
-				// Where we are in the new array
-				var trackPos;
+			// function ready(data) {
+			// 	var trackIterator;
+			// 	// Where we are in the new array
+			// 	var trackPos;
 
-				var nodes1=data[0];
-				var meta1=data[1];
-				var oceans1=data[2];
-				var nodeFeatures = [];
-				var metaFC=[];
+			// 	var nodes1=data[0];
+			// 	var meta1=data[1];
+			// 	var oceans1=data[2];
+			// 	var nodeFeatures = [];
+			// 	var metaFC=[];
 
-				meta1.forEach(function(d){
-						metaFC.push(d);
-				});
-				//console.log(metaFC);
+			// 	meta1.forEach(function(d){
+			// 			metaFC.push(d);
+			// 	});
+			// 	//console.log(metaFC);
 
-				nodes1.forEach(function(d){
-						metaFC.forEach(function(e){
-							if (e["Shark ID"]==d["Shark ID"]){
-								sp=e["Species Name"];
-								commn=e["Commn Name"];
-								n=e["Name"];
-								tt=e["TagType"];
-								td=e["TagDay"];
-								ty=e["TagYear"];
-								tm=e["TagMonth"];
-								t=e["Total Length"];
-								s=e["Sex"];
-								m=e["Maturity"];
-								tc=e["Track Color"];
-								a=e["Active?"];
-								return sp,commn, n, tt, td,ty,tm,t,s,m,tc,a
-							}
-						});
-						d.LatLng = [+d.Lat, +d.Lon];
-						d.Species=sp;
-						d.CommonName=commn;
-						d.Name=n;
-						d.TagType=tt;
-						d.TagDay=td;
-						d.TagMonth=tm;
-						d.Length=t;
-						d.Sex=s;
-						d.Maturity=m;
-						d.TrackColor=tc;
-						d.ActiveStatus=a;
-						if (d.Class>=0){
-							nodeFeatures.push(turf.point([+d.Lon, +d.Lat], d));
-						}
-						else if (d.CommonName=='Tiger') {
-							nodeFeatures.push(turf.point([+d.Lon, +d.Lat], d));
-						}
+			// 	nodes1.forEach(function(d){
+			// 			metaFC.forEach(function(e){
+			// 				if (e["Shark ID"]==d["Shark ID"]){
+			// 					sp=e["Species Name"];
+			// 					commn=e["Commn Name"];
+			// 					n=e["Name"];
+			// 					tt=e["TagType"];
+			// 					td=e["TagDay"];
+			// 					ty=e["TagYear"];
+			// 					tm=e["TagMonth"];
+			// 					t=e["Total Length"];
+			// 					s=e["Sex"];
+			// 					m=e["Maturity"];
+			// 					tc=e["Track Color"];
+			// 					a=e["Active?"];
+			// 					return sp,commn, n, tt, td,ty,tm,t,s,m,tc,a
+			// 				}
+			// 			});
+			// 			d.LatLng = [+d.Lat, +d.Lon];
+			// 			d.Species=sp;
+			// 			d.CommonName=commn;
+			// 			d.Name=n;
+			// 			d.TagType=tt;
+			// 			d.TagDay=td;
+			// 			d.TagMonth=tm;
+			// 			d.Length=t;
+			// 			d.Sex=s;
+			// 			d.Maturity=m;
+			// 			d.TrackColor=tc;
+			// 			d.ActiveStatus=a;
+			// 			if (d.Class>=0){
+			// 				nodeFeatures.push(turf.point([+d.Lon, +d.Lat], d));
+			// 			}
+			// 			else if (d.CommonName=='Tiger') {
+			// 				nodeFeatures.push(turf.point([+d.Lon, +d.Lat], d));
+			// 			}
 
-				});
+			// 	});
 
-				nodeFeatures = turf.featureCollection(nodeFeatures);
+			// 	nodeFeatures = turf.featureCollection(nodeFeatures);
 
-				var ptsWithin = turf.pointsWithinPolygon(nodeFeatures, oceans1);
-				// console.log(ptsWithin);
+			// 	var ptsWithin = turf.pointsWithinPolygon(nodeFeatures, oceans1);
+			// 	// console.log(ptsWithin);
 
 
-				for (trackIterator = 0; trackIterator < ptsWithin.features.length; trackIterator++) {
-					if (trackIterator == 0) {
-						trackPos = 0;
-					} else {
-							if (ptsWithin.features[trackIterator].properties["Shark ID"] == ptsWithin.features[trackIterator-1].properties["Shark ID"] ) {
-									lines.features.push({ "type": "Feature","geometry": {"type": "LineString","coordinates": []},"properties": {"Shark ID": null, "Date": null, "Date2": null, "Species Name": null}});
-										lines.features[trackPos].geometry.coordinates.push(ptsWithin.features[trackIterator].geometry.coordinates);
-										lines.features[trackPos].geometry.coordinates.push(ptsWithin.features[trackIterator-1].geometry.coordinates);
-										lines.features[trackPos].properties["Shark ID"] = ptsWithin.features[trackIterator].properties["Shark ID"];
-										lines.features[trackPos].properties["Species"] = ptsWithin.features[trackIterator].properties["Species"];
-										lines.features[trackPos].properties.Date = ptsWithin.features[trackIterator-1].properties.Date;
-										lines.features[trackPos].properties.Date2 = ptsWithin.features[trackIterator].properties.Date;
-										trackPos++;
-						}
-					}
-				}
+			// 	for (trackIterator = 0; trackIterator < ptsWithin.features.length; trackIterator++) {
+			// 		if (trackIterator == 0) {
+			// 			trackPos = 0;
+			// 		} else {
+			// 				if (ptsWithin.features[trackIterator].properties["Shark ID"] == ptsWithin.features[trackIterator-1].properties["Shark ID"] ) {
+			// 						lines.features.push({ "type": "Feature","geometry": {"type": "LineString","coordinates": []},"properties": {"Shark ID": null, "Date": null, "Date2": null, "Species Name": null}});
+			// 							lines.features[trackPos].geometry.coordinates.push(ptsWithin.features[trackIterator].geometry.coordinates);
+			// 							lines.features[trackPos].geometry.coordinates.push(ptsWithin.features[trackIterator-1].geometry.coordinates);
+			// 							lines.features[trackPos].properties["Shark ID"] = ptsWithin.features[trackIterator].properties["Shark ID"];
+			// 							lines.features[trackPos].properties["Species"] = ptsWithin.features[trackIterator].properties["Species"];
+			// 							lines.features[trackPos].properties.Date = ptsWithin.features[trackIterator-1].properties.Date;
+			// 							lines.features[trackPos].properties.Date2 = ptsWithin.features[trackIterator].properties.Date;
+			// 							trackPos++;
+			// 			}
+			// 		}
+			// 	}
 
 				// Close the loading popup
 				doneLoading();
@@ -143,7 +143,7 @@
 
 					map.addSource('Sharks', {
 							'type':'geojson',
-							'data': ptsWithin
+							'data': 'ptsWithin.geojson'
 					});
 
 					map.addSource('10m-bathymetry-81bsvj', {
@@ -180,7 +180,7 @@
 					});
 					map.addSource('lines', {
 							type: 'geojson',
-							data: lines
+							data: 'lines.geojson'
 						});
 
 					map.addLayer({
@@ -511,6 +511,6 @@
 						var features = map.queryRenderedFeatures(e.point, { layers: ['pg','co','iox','gc','ln' ]});
 						map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
 						});
-			}
+			// }
 		});
 </script>
