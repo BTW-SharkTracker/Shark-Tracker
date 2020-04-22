@@ -19,19 +19,23 @@
 	<div id='console'>
 		<h1>Beneath the Waves</h1>
 	</div>
-	<div id='consoleDate'>
-	  <h1>Filter Map by Date</h1>
-		<div class='session' id='sliderbar'>
-		  <h2>Month: <label id='active-month'>July</label></h2>
-		  <input id='slider' class='row' type='range' min='0' max='11' step='1' value='6' />
-		</div>
-		<div class='session'>
-		</div>
-</div>
 
 	<nav id="filter-group" class="filter-group"></nav>
 	<nav id="filter-group2" class="filter-group2"></nav>
+	<div id="speciesDiv">
+	<div id="slider"></div></div>
+	<div id="chart"></div>
 
+		<!--table for data of brushed elements-->
+		<div id="table">
+				<table>
+						<tr>
+								<th>State</th>
+								<th>Income</th>
+								<th>High School Graduation</th>
+						</tr>
+				</table>
+		</div>
 </body>
 
 <script type="text/javascript">
@@ -47,20 +51,7 @@
 	minZoom: 3,
 	maxZoom: 6
 	});
-	var months = [
-		'January',
-		'February',
-		'March',
-		'April',
-		'May',
-		'June',
-		'July',
-		'August',
-		'September',
-		'October',
-		'November',
-		'December'
-		];
+
 
 
 	// Popup that says loading...
@@ -121,9 +112,11 @@
 						var parts =d["Date"].split('/');
 						// Please pay attention to the month (parts[1]); JavaScript counts months from 0:
 						// January - 0, February - 1, etc.
-						var month=parts[0]-1;
-						var day=parts[1];
-						var year=parts[2];
+						var yearParts =parts[2].split(' ');
+			      var month=parts[0]-1;
+			      var day=parts[1];
+			      var year=yearParts[0];
+			      var time=yearParts[1];
 						//console.log(parts[0]);
 						d.day=day;
 						d.month=month;
@@ -526,18 +519,6 @@
 							});
 
 
-							//attempted code for slider
-								document.getElementById('slider').addEventListener('input', function(e) {
-								  var month = parseInt(e.target.value);
-								  // update the map pg', 'iox', 'gc', 'co', 'ln'
-
-										map.setFilter('gc', ["==","month",month]);
-										map.setFilter('gcLines', ['==',"month", month]);
-								 		map.setFilter('pg', ["==","month",month]);
-								//	map.setFilter('pgLines', ["==","month",month]);
-								  // update text in the UI
-								  document.getElementById('active-month').innerText = month;
-								});
 						//generate pop-up when a node is clicked on
 						map.on('click', function (e) {
 						var bbox = [
@@ -564,6 +545,134 @@
 						var features = map.queryRenderedFeatures(e.point, {layers: ['pg','co','iox','gc','ln']});
 						map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
 						});
+
+
+
+						
+						//slider
+						var formatDateIntoYear = d3.timeFormat("%Y");
+						var formatDate = d3.timeFormat("%b %Y");
+
+						var startDate = new Date("2016-01-01"),
+						    endDate = new Date("2017-12-31");
+
+						var margin = {top:0, right:20, bottom:0, left:60},
+						    width = 900,
+						    height = 200;
+
+						var svg = d3.select("#slider")
+						    .append("svg")
+						    .attr("width", width + margin.left + margin.right)
+						    .attr("height", height);
+
+						var x = d3.scaleTime()
+						    .domain([startDate, endDate])
+						    .range([0, width])
+						    .clamp(true);
+
+						var slider = svg.append("g")
+						    .attr("class", "slider")
+						    .attr("transform", "translate(" + margin.left + "," + height / 2 + ")");
+
+						slider.append("line")
+						    .attr("class", "track")
+						    .attr("x1", x.range()[0])
+						    .attr("x2", x.range()[1])
+						  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+						    .attr("class", "track-inset")
+						  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+						    .attr("class", "track-overlay")
+						    .call(d3.drag()
+						        .on("start.interrupt", function() { slider.interrupt(); })
+						        .on("start drag", function() { hue(x.invert(d3.event.x)); }));
+
+						slider.insert("g", ".track-overlay")
+						    .attr("class", "ticks")
+						    .attr("transform", "translate(0," + 18 + ")")
+						  .selectAll("text")
+						    .data(x.ticks(12))
+						    .enter()
+						    .append("text")
+						    .attr("x", x)
+
+						    .attr("y", 10)
+						    .attr("text-anchor", "middle")
+						    .text(function(d) { return formatDate(d); });
+
+						var label1 = slider.append("text")
+						    .attr("class", "label1")
+						    .attr("text-anchor", "middle")
+								.attr("color", "white")
+						    .text(formatDate(startDate))
+						    .attr("transform", "translate(0," + (-25) + ")")
+
+						var handle = slider.insert("circle", ".track-overlay")
+						    .attr("class", "handle")
+						    .attr("r", 9);
+						function getMonth(z){
+							if (z=="Jan"){
+								return 0
+							}
+							if (z=="Feb"){
+								return 1
+							}
+							if (z=="Mar"){
+								return 2
+							}
+							if (z=="Apr"){
+								return 3
+							}
+							if (z=="May"){
+								return 4
+							}
+							if (z=="Jun"){
+								return 5
+							}
+							if (z=="Jul"){
+								return 6
+							}
+							if (z=="Aug"){
+								return 7
+							}
+							if (z=="Sep"){
+								return 8
+							}
+							if (z=="Oct"){
+								return 9
+							}
+							if (z=="Nov"){
+								return 10
+							}
+							if (z=="Dec"){
+								return 11
+							}
+						}
+						function hue(h) {
+							//typeOf h)
+							//var parts =h.split(' ');
+							dateString=h.toString();
+							var parts =dateString.split(' ');
+							//console.log(parts[0]);
+
+							var yearParts =parts[2].split(' ');
+				      var month=getMonth(parts[1]);
+				      var day=parts[2];
+				      var year=parts[3];
+				      //var time=yearParts[1];
+
+							//console.log(h.toString());
+							console.log(month);
+							//map.setFilter('gc', ["==","month",month]);
+							map.setFilter('gc',["all",["==","month",month], ["==", "Shark ID", "171619"]]);
+							map.setFilter('gcLines',["all",["==","month",month], ["==", "Shark ID", "171619"]]);
+						  handle.attr("cx", x(h));
+							//console.log(handle.attr("cx", x(h)));
+						  label1
+						    .attr("x", x(h))
+						    .text(formatDate(h));
+						}
+
+
 			}
 		});
 </script>
