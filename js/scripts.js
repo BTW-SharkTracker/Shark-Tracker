@@ -1,10 +1,10 @@
 // JavaScript for Beneath the Waves Shark Tracker
 // Authors: Alexis and Felix
 
+
 // Access Token: should probably be changed
 mapboxgl.accessToken = 'pk.eyJ1IjoiYWczNzEzYSIsImEiOiJjazd1aG04MnUxYjU2M25rNWh5Nng2NmN6In0.4HUpNtdZx3kHM-dY4YY3GQ';
 var filterGroup = document.getElementById('filter-group');
-var filterGroup2 = document.getElementById('filter-group2');
 
 // Initialize map
 var map = new mapboxgl.Map({
@@ -13,7 +13,7 @@ var map = new mapboxgl.Map({
     center: [-55.101826, 30.855898],
     zoom: 3,
     minZoom: 3,
-    maxZoom: 6
+    maxZoom: 12
 });
 
 // Popup that says loading...
@@ -30,6 +30,13 @@ var brushedPts = ["any", ["==","pointID", 0]];
 var popupPt;
 // Declare popup variable
 let popup =new mapboxgl.Popup();
+
+
+//code for menu
+
+
+
+
 
 // Promise.all([
 //     d3.json('data/ptsWithin.geojson')])
@@ -55,15 +62,15 @@ let popup =new mapboxgl.Popup();
 //             'coordinates': coordinates
 //         };
 //     }
-    
+
     map.on('load', function() {
-    
+
         // Close the loading popup
         doneLoading();
         function doneLoading() {
             loading.remove();
         }
-    
+
         // map.addSource('point', {
         //     'type': 'geojson',
         //     'data': animate()
@@ -77,7 +84,7 @@ let popup =new mapboxgl.Popup();
         //     map.addImage('shark', image);
         //     }
         // );
-        
+
         // map.addLayer({
         //     'id': 'point',
         //     'source': 'point',
@@ -87,21 +94,20 @@ let popup =new mapboxgl.Popup();
         //         'circle-color': '#007cbf'
         //     }
         // });
-    
-    
+
         // Add sources
         // Shark meta and points from preprocess.html
         map.addSource('Sharks', {
             'type':'geojson',
             'data': 'data/ptsWithin.geojson'
         });
-    
+
         // Bathymetry data
         map.addSource('10m-bathymetry-81bsvj', {
             type: 'vector',
             url: 'mapbox://mapbox.9tm8dx88'
         });
-    
+
         // Lines data from preprocess.html
         map.addSource('lines', {
                 type: 'geojson',
@@ -133,7 +139,7 @@ let popup =new mapboxgl.Popup();
             },
             "filter": ["==", "Shark ID","106744"]
         });
-    
+
         // Add bathymetry layer
         map.addLayer(
         {
@@ -156,7 +162,7 @@ let popup =new mapboxgl.Popup();
         },
         'land-structure-polygon'
         );
-    
+
         // Add lines for prionace glauca
         map.addLayer({
             'id': 'pgLines',
@@ -172,7 +178,7 @@ let popup =new mapboxgl.Popup();
             },
             "filter": ["==", "Species","Prionace glauca"]
         });
-    
+
         // Add points for prionace glauca
         map.addLayer({
             'id': 'pg',
@@ -193,7 +199,7 @@ let popup =new mapboxgl.Popup();
                     ["==","Class","2"],
                     ["==","Class","3"]]]
         });
-    
+
         // Add lines for Isurus oxyrinchus
         map.addLayer({
             'id': 'ioxLines',
@@ -209,7 +215,7 @@ let popup =new mapboxgl.Popup();
             },
             "filter": ["==", "Species","Isurus oxyrinchus"]
         });
-    
+
         // Add points for Isurus oxyrinchus
         map.addLayer({
             'id': 'iox',
@@ -230,7 +236,7 @@ let popup =new mapboxgl.Popup();
                     ["==","Class","2"],
                     ["==","Class","3"]]]
         });
-    
+
         // Add lines for Lamna nasus
         map.addLayer({
             'id': 'lnLines',
@@ -246,7 +252,7 @@ let popup =new mapboxgl.Popup();
             },
             "filter": ["==", "Species","Lamna nasus"]
         });
-    
+
         // Add points for lamna nasus
         map.addLayer({
             'id': 'ln',
@@ -267,7 +273,7 @@ let popup =new mapboxgl.Popup();
                     ["==","Class","2"],
                     ["==","Class","3"]]]
         });
-    
+
         // Add lines for galeocerdo cuvier
         map.addLayer({
             'id': 'gcLines',
@@ -283,7 +289,7 @@ let popup =new mapboxgl.Popup();
             },
             "filter": ["==", "Species","Galeocerdo cuvier"]
         });
-    
+
         // Add points for galeocerdo cuvier
         map.addLayer({
             'id': 'gc',
@@ -306,7 +312,7 @@ let popup =new mapboxgl.Popup();
                     ["==","Class","2"],
                     ["==","Class","3"]]]
         });
-    
+
         // Add lines for carcharhinus obscurus
         map.addLayer({
             'id': 'coLines',
@@ -322,7 +328,7 @@ let popup =new mapboxgl.Popup();
             },
             "filter": ["==", "Species","Carcharhinus obscurus"]
         });
-    
+
         // Add points for carcharhinus obscurus
         map.addLayer({
             'id': 'co',
@@ -355,19 +361,19 @@ let popup =new mapboxgl.Popup();
                 // Default filter that makes sure none show
                 "filter":["any", ["==","pointID", 0]
             ]});
-    
+
         // Checkbox and label for galeocerdo
         var inputGC = document.createElement('input');
         inputGC.type = 'checkbox';
-        inputGC.id = "gc";
+        inputGC.id = "gcCheckBox";
         inputGC.checked = true;
         filterGroup.appendChild(inputGC);
-    
+
         var labelGC = document.createElement('label');
-        labelGC.setAttribute('for', "gc");
+        labelGC.setAttribute('for', "gcCheckBox");
         labelGC.textContent = "Tiger Shark (Galeocerdo cuvier)";
         filterGroup.appendChild(labelGC);
-    
+
         // When the checkbox changes, update the visibility of the layer.
         inputGC.addEventListener('change', function(e) {
             map.setLayoutProperty(
@@ -381,19 +387,20 @@ let popup =new mapboxgl.Popup();
                 e.target.checked ? 'visible' : 'none'
             );
         });
-    
+
+
         // Checkbox and label for lamna nasus
         var inputLN = document.createElement('input');
         inputLN.type = 'checkbox';
-        inputLN.id = "ln";
+        inputLN.id = "lnCheckBox";
         inputLN.checked = true;
         filterGroup.appendChild(inputLN);
-    
+
         var labelLN = document.createElement('label');
-        labelLN.setAttribute('for', "ln");
+        labelLN.setAttribute('for', "lnCheckBox");
         labelLN.textContent = "Porbeagle Shark (Lamna nasus)";
         filterGroup.appendChild(labelLN);
-    
+
         // When the checkbox changes, update the visibility of the layer.
         inputLN.addEventListener('change', function(e) {
             map.setLayoutProperty(
@@ -407,19 +414,19 @@ let popup =new mapboxgl.Popup();
                 e.target.checked ? 'visible' : 'none'
             );
         });
-    
+
         // Checkbox and label for isurus
         var inputIOX = document.createElement('input');
         inputIOX.type = 'checkbox';
-        inputIOX.id = "iox";
+        inputIOX.id = "ioxCheckBox";
         inputIOX.checked = true;
         filterGroup.appendChild(inputIOX);
-    
+
         var labelIOX = document.createElement('label');
-        labelIOX.setAttribute('for', "iox");
+        labelIOX.setAttribute('for', "ioxCheckBox");
         labelIOX.textContent = "Shortfin Mako Shark (Isurus oxyrinchus)";
         filterGroup.appendChild(labelIOX);
-    
+
         // When the checkbox changes, update the visibility of the layer.
         inputIOX.addEventListener('change', function(e) {
             map.setLayoutProperty(
@@ -433,19 +440,19 @@ let popup =new mapboxgl.Popup();
                 e.target.checked ? 'visible' : 'none'
             );
         });
-    
+
         // Checkbox and label for carcharhinus
         var inputCO = document.createElement('input');
             inputCO.type = 'checkbox';
-            inputCO.id = "co";
+            inputCO.id = "coCheckBox";
             inputCO.checked = true;
             filterGroup.appendChild(inputCO);
-    
+
         var labelCO = document.createElement('label');
-            labelCO.setAttribute('for', "co");
+            labelCO.setAttribute('for', "coCheckBox");
             labelCO.textContent = "Dusky Shark (Carcharhinus obscurus)";
             filterGroup.appendChild(labelCO);
-    
+
         // When the checkbox changes, update the visibility of the layer.
         inputCO.addEventListener('change', function(e) {
             map.setLayoutProperty(
@@ -459,19 +466,19 @@ let popup =new mapboxgl.Popup();
                 e.target.checked ? 'visible' : 'none'
             );
         });
-    
+
         // Checkbox and label for prionace
         var inputpg = document.createElement('input');
         inputpg.type = 'checkbox';
-        inputpg.id = "pg";
+        inputpg.id = "pgCheckBox";
         inputpg.checked = true;
         filterGroup.appendChild(inputpg);
-    
+
         var labelpg = document.createElement('label');
-        labelpg.setAttribute('for', "pg");
+        labelpg.setAttribute('for', "pgCheckBox");
         labelpg.textContent = "Blue Shark (Prionace glauca)";
         filterGroup.appendChild(labelpg);
-    
+
         // When the checkbox changes, update the visibility of the layer.
         inputpg.addEventListener('change', function(e) {
             map.setLayoutProperty(
@@ -485,21 +492,22 @@ let popup =new mapboxgl.Popup();
                 e.target.checked ? 'visible' : 'none'
             );
         });
-    
-    
+        document.getElementById("colorSquares").style.visibility = "visible";
+
+
         //generate pop-up when a node is clicked on
         map.on('click', function (e) {
             var bbox = [
-                [e.point.x - 10, e.point.y - 10],
-                [e.point.x + 10, e.point.y + 10]
+                [e.point.x - 5, e.point.y - 5],
+                [e.point.x + 5, e.point.y + 5]
             ];
-    
+
             var features = map.queryRenderedFeatures(bbox, { layers: ['pg', 'iox', 'gc', 'co', 'ln'] });
-    
+
             if (!features.length) {
                 return;
             }
-    
+
             var feature = features[0];
             // Set popupPt equal to selected pointID
             popupPt = feature.properties.pointID;
@@ -510,7 +518,7 @@ let popup =new mapboxgl.Popup();
                         +"<br/><h4>Date: </h4>"+feature.properties['Date'])
                 .addTo(map);
             });
-    
+
         // Change mouse pointer when near point
         map.on('mousemove', function (e) {
             var features = map.queryRenderedFeatures(e.point, { layers: ['pg','co','iox','gc','ln' ]});
