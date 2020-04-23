@@ -83,8 +83,10 @@ function process() {
             var oceans=data[2];
             var nodeFeatures = [];
 
+            ptCounter = 0;
             // Merge shark points and meta data
             nodes.forEach(function(d){
+                ptCounter++;
                     metaFC.forEach(function(e){
                         if (e["Shark ID"]==d["Shark ID"]){
                             sp=e["Species Name"];
@@ -123,6 +125,7 @@ function process() {
                     d.Maturity=m;
                     d.TrackColor=tc;
                     d.ActiveStatus=a;
+                    d.pointID=ptCounter;
 
                     // Filter out points of bad quality
                     if (d.Class>=0){
