@@ -15,11 +15,54 @@
 		<div id='console'>
 			<h1>Beneath the Waves</h1>
 		</div>
-		<div id='map'></div>
-		<nav id="filter-group" class="filter-group"></nav>
-		<nav id="filter-group2" class="filter-group2"></nav>
+		<div class="collapsible-menu">
+            <input type="checkbox" id="menu">
+            <label for="menu">Shark Info</label>
+            <div class="menu-content">
+            </div>
+        </div>
+
+		<div id="map"></div>
+		<nav id="filter-group" class="filter-group">
+			<div id ="colorSquares">
+				<div class="squareTiger"></div>
+				<div class="squareMako"></div>
+				<div class="squarePor"></div>
+				<div class="squareBlue"></div>
+				<div class="squareDusky"></div>
+			</div>
+		</nav>
 		<div id="scatterplot"></div>
+
 	</body>
+
+	<script type="text/javascript">
+	document.getElementById("colorSquares").style.visibility = "hidden";
+
+	Promise.all([
+			d3.csv('/not_in_use_by_code/Metadata_Sharks_ToJuly31_19.csv')])
+			.then(ready);
+
+	var str='<ul>';
+	function ready(data) {
+			var metadata = data[0];
+			console.log(metadata);
+			//var str = '<ul>'
+
+			metadata.forEach(function(d) {
+			  str += '<li>'+ d.Name + '</li>';
+				//console.log(d.Name);
+			});
+			str += '</ul>';
+
+		}
+
+document.getElementById("menu-content").innerHTML = str;
+
+	//document.getElementById("menu-content").innerHTML = str;
+
+	</script>
+
 	<script src="js/scripts.js"></script>
 	<script src="js/scatterplot.js"></script>
 </html>
