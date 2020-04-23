@@ -11,6 +11,10 @@ body {
   height: 90vh;
 }
 
+#scatterplot {
+  padding-top: 90vh;
+}
+
 h1 {
 
 	font-family: 'Montserrat', sans-serif;
