@@ -16,27 +16,35 @@
     
         function randomData(samples) {
             var data = [],
-                random = d3.randomNormal();
+            random = d3.randomNormal();
 
-
-            data.push({
-               date: new Date (ptsWithin.features[0].properties.Date),
-               close: 1
-           });
-           data.push({
-               date: new Date (ptsWithin.features[10].properties.Date),
-               close: 1
-           });
-           data.push({
-               date: new Date (ptsWithin.features[20].properties.Date),
-               close: 1
-           });
-           data.push({
-               date: new Date (ptsWithin.features[30].properties.Date),
-               close: 1
-           });
-
-            //console.log(data);
+            for (let iterator = 0; iterator < ptsWithin.features.length; iterator++) {
+                switch (ptsWithin.features[iterator].properties["Shark ID"]) {
+                    case "106744":
+                        data.push({
+                            date: new Date (ptsWithin.features[iterator].properties.Date),
+                            close: 1
+                        });
+                        break;
+                    case "141267":
+                        data.push({
+                            date: new Date (ptsWithin.features[iterator].properties.Date),
+                            close: 2
+                        });
+                    case "176750":
+                    data.push({
+                        date: new Date (ptsWithin.features[iterator].properties.Date),
+                        close: 3
+                    });
+                    case "181740":
+                    data.push({
+                        date: new Date (ptsWithin.features[iterator].properties.Date),
+                        close: 4
+                    });
+                    default:
+                        break;
+                }
+            }
             return data;
         }
         e=[];
@@ -51,7 +59,7 @@
         console.log(ds);
         //var ds =d3.csv("data.csv");
         var margin = { top: 20, right: 20, bottom: 30, left: 50 };
-        width = 800 - margin.left - margin.right,
+        width = 1000 - margin.left - margin.right,
         height = 50;
 
         var x = d3.scaleLinear()
