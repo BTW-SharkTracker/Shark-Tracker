@@ -20,30 +20,32 @@ function ready(data) {
         if (iteratorDate > maxDate) {
             maxDate = iteratorDate
         }
-        // switch (ptsWithin.features[iterator].properties.Species) {
-        //     case "Prionace glauca":
-        //         var speciesColor = "#1f77b4";
-        //         break;
-        //     case "Isurus oxyrinchus":
-        //         var speciesColor = "#ff7f0e";
-        //         break;
-        //     case "Lamna nasus":
-        //         var speciesColor = "#2ca02c";
-        //         break;
-        //     case "Galeocerdo cuvier":
-        //         var speciesColor = "#d62728";
-        //         break;
-        //     case "Carcharhinus obscurus":
-        //         var speciesColor = "#9467bd";
-        //         break;
-        //     default:
-        //         var speciesColor = "#00000"
-        //         break;
-        // }
+        // Set color based on species
+        switch (ptsWithin.features[iterator].properties.Species) {
+            case "Prionace glauca":
+                var speciesColor = "#1f77b4";
+                break;
+            case "Isurus oxyrinchus":
+                var speciesColor = "#ff7f0e";
+                break;
+            case "Lamna nasus":
+                var speciesColor = "#2ca02c";
+                break;
+            case "Galeocerdo cuvier":
+                var speciesColor = "#d62728";
+                break;
+            case "Carcharhinus obscurus":
+                var speciesColor = "#9467bd";
+                break;
+            default:
+                var speciesColor = "#00000"
+                break;
+        }
         scatterPts.push({
             date: iteratorDate,
             name: ptsWithin.features[iterator].properties.Name,
-            // color: speciesColor
+            color: speciesColor,
+            pointID: ptsWithin.features[iterator].properties.pointID
         })
     }
 
@@ -92,7 +94,7 @@ function ready(data) {
         .attr("cx", function (d) { return xScale(d.date); })
         .attr("cy", function (d) { return yScale(d.name); })
         .attr("opacity", 0.7)
-        .style("fill", "#4292c6");
+        .style("fill", function(d){return d.color;});
 ;
 
     // Brushing stuff
@@ -111,9 +113,14 @@ function ready(data) {
                 if (xScale(d.date) >= x0 && xScale(d.date) <= x0 + dx && yScale(d.name) >= y0 && yScale(d.name) <= y0 + dy)
                     {
                     console.log(d.date);
-                    return "#ec7014"; }
-                else { return "#4292c6"; }
+                    // Add the point to the brushed point filter array
+                    var currentBrushedPt = ["==","pointID", d.pointID];
+                    brushedPts.push(currentBrushedPt);
+                    return "#ffff00"; }
+                else { return d.color }
             });
+        // Call map updater
+        brushMap();
     }
 
     function brushended() {
@@ -122,7 +129,27 @@ function ready(data) {
             .transition()
             .duration(150)
             .ease(d3.easeLinear)
-            .style("fill", "#4292c6");
+            .style("fill", function(d){return d.color;});
+            // Clear the filter array
+            brushedPts = ["any", ["==","pointID", 0]];
         }
+        // Call map updaters
+        brushMap();
     }
+
+    // On map popup open: enlarge selected point on scatterplot
+    popup.on('open', function(e) {
+        svg.selectAll('circle')
+            .attr("r", function(d) {
+                if (d.pointID == popupPt)
+                    {return 20;}
+                else {return 5;}
+            })
+    });
+
+    // On map popup close: return to normal
+    popup.on('close', function(e) {
+        svg.selectAll('circle')
+            .attr("r", 5)
+    });
 }

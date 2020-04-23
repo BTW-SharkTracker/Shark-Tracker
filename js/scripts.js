@@ -24,6 +24,13 @@ var loading = new mapboxgl.Popup({ closeOnClick: false })
 
 var canvas = map.getCanvasContainer();
 
+// Array to hold points selected by brushing
+var brushedPts = ["any", ["==","pointID", 0]];
+// Declare popup pointID variable
+var popupPt;
+// Declare popup variable
+let popup =new mapboxgl.Popup();
+
 // Promise.all([
 //     d3.json('data/ptsWithin.geojson')])
 // .then(ready);
@@ -336,6 +343,18 @@ var canvas = map.getCanvasContainer();
                     ["==","Class","2"],
                     ["==","Class","3"]]]
         });
+
+        // Layer to show points selected by brushing scatterplot
+        map.addLayer({
+            'id': 'brushed',
+            'type': 'circle',
+            'source': 'Sharks',
+            'paint': {
+                'circle-radius': 5,
+                'circle-color': '#ffff00'},
+                // Default filter that makes sure none show
+                "filter":["any", ["==","pointID", 0]
+            ]});
     
         // Checkbox and label for galeocerdo
         var inputGC = document.createElement('input');
@@ -482,7 +501,9 @@ var canvas = map.getCanvasContainer();
             }
     
             var feature = features[0];
-            var popup = new mapboxgl.Popup()
+            // Set popupPt equal to selected pointID
+            popupPt = feature.properties.pointID;
+            popup
                 .setLngLat(feature.geometry.coordinates)
                 .setHTML('<h3><p>' +feature.properties['Name']+"</h3> "+"<h4>Common Name:</h4>"+feature.properties['CommonName']+
                         "</p><h4>Species: </h4>"+feature.properties['Species']
@@ -495,7 +516,7 @@ var canvas = map.getCanvasContainer();
             var features = map.queryRenderedFeatures(e.point, { layers: ['pg','co','iox','gc','ln' ]});
             map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
         });
-    
+
         // function animateMarker(p) {
         //     map.getSource('point').setData(animate());
         //     requestAnimationFrame(animateMarker);
@@ -503,3 +524,8 @@ var canvas = map.getCanvasContainer();
         //     animateMarker();
     });
 // }
+
+// Update brushed filter when called
+function brushMap(){
+    map.setFilter('brushed', brushedPts);
+}

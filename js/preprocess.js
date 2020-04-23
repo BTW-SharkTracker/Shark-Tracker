@@ -82,8 +82,8 @@ function process() {
             var metaFC=data[1];
             var oceans=data[2];
             var nodeFeatures = [];
-
-            ptCounter = 0;
+            // To give each point a unique ID
+            var ptCounter = 0;
             // Merge shark points and meta data
             nodes.forEach(function(d){
                 ptCounter++;
