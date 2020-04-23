@@ -4,12 +4,25 @@ Promise.all([
 .then(ready);
 
 function ready(data) {
+  var coll = document.getElementsByClassName("collapsible");
+  var i;
 
+  for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var scatterplot = this.nextElementSibling;
+      if (scatterplot.style.display === "block") {
+        scatterplot.style.display = "none";
+      } else {
+        scatterplot.style.display = "block";
+      }
+    });
+  }
     // Initialize Variables
     var ptsWithin = data[0];
     var minDate = new Date (ptsWithin.features[0].properties.Date);
     var maxDate = new Date (ptsWithin.features[0].properties.Date);
-    
+
     // Push all dates to x and set y to shark ID / name, check for min and max date
     var scatterPts = [];
     for (let iterator = 0; iterator < ptsWithin.features.length; iterator++) {
@@ -50,7 +63,7 @@ function ready(data) {
     }
 
     // Size settings
-    var margin = { top: 20, right: 20, bottom: 30, left: 50 };
+    var margin = { top: 20, right: 20, bottom: 30, left: 70 };
     width = window.innerWidth - margin.left - margin.right - 50,
     height = window.innerHeight - margin.top - margin.bottom -50;
 
@@ -67,7 +80,7 @@ function ready(data) {
         yAxis = d3.axisLeft(yScale);
 
 
-    // Drawing Graph 
+    // Drawing Graph
     var svg = d3.select("#scatterplot").append("svg")
             .attr("id", "scatterplot_svg")
             .attr("width", width + margin.left + margin.right)
@@ -95,7 +108,6 @@ function ready(data) {
         .attr("cy", function (d) { return yScale(d.name); })
         .attr("opacity", 0.7)
         .style("fill", function(d){return d.color;});
-;
 
     // Brushing stuff
     svg.append("g")
