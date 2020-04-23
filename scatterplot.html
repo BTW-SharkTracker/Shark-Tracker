@@ -19,32 +19,12 @@
             random = d3.randomNormal();
 
             for (let iterator = 0; iterator < ptsWithin.features.length; iterator++) {
-                switch (ptsWithin.features[iterator].properties["Shark ID"]) {
-                    case "106744":
-                        data.push({
-                            date: new Date (ptsWithin.features[iterator].properties.Date),
-                            close: 1
-                        });
-                        break;
-                    case "141267":
-                        data.push({
-                            date: new Date (ptsWithin.features[iterator].properties.Date),
-                            close: 2
-                        });
-                    case "176750":
-                    data.push({
-                        date: new Date (ptsWithin.features[iterator].properties.Date),
-                        close: 3
-                    });
-                    case "181740":
-                    data.push({
-                        date: new Date (ptsWithin.features[iterator].properties.Date),
-                        close: 4
-                    });
-                    default:
-                        break;
-                }
+                data.push({
+                    date: new Date (ptsWithin.features[iterator].properties.Date),
+                    y: ptsWithin.features[iterator].properties["Shark ID"]
+                })
             }
+            console.log(data);
             return data;
         }
         e=[];
@@ -60,10 +40,9 @@
         //var ds =d3.csv("data.csv");
         var margin = { top: 20, right: 20, bottom: 30, left: 50 };
         width = 1000 - margin.left - margin.right,
-        height = 50;
+        height = 500;
 
         var x = d3.scaleLinear()
-            //.range([0, width]);
             .domain(d3.extent(ds))
             .range([0, width])
             .nice();
@@ -73,7 +52,8 @@
             .range([height, 0]);
 
         var xAxis = d3.axisBottom(x).ticks(12),
-            yAxis = d3.axisLeft(y).ticks(12 * height / width);
+            yAxis = d3.axisLeft(y).ticks(36);
+
 
         var svg = d3.select("#g1").append("svg")
                 .attr("id", "g1_svg")
@@ -87,7 +67,7 @@
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         x.domain(d3.extent(ds, function (d) { return d.date; })).nice();
-        y.domain(d3.extent(ds, function (d) { return d.close; })).nice();
+        y.domain(d3.extent(ds, function (d) { return d.y; })).nice();
 
         svg.append("g")
         .attr("class", "x axis ")
@@ -106,7 +86,7 @@
             .attr("class", "dot")
             .attr("r", 5)
             .attr("cx", function (d) { return x(d.date); })
-            .attr("cy", function (d) { return y(d.close); })
+            .attr("cy", function (d) { return y(d.y); })
             .attr("opacity", 0.7)
             .style("fill", "#4292c6");
 
@@ -124,7 +104,7 @@
 
             svg.selectAll('circle')
                 .style("fill", function (d) {
-                    if (x(d.date) >= x0 && x(d.date) <= x0 + dx && y(d.close) >= y0 && y(d.close) <= y0 + dy)
+                    if (x(d.date) >= x0 && x(d.date) <= x0 + dx && y(d.y) >= y0 && y(d.y) <= y0 + dy)
                         {
                         console.log(d.date);
                         return "#ec7014"; }
