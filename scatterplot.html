@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<body>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <p id="g1"></p>
+
+ <script>
+    var ptsWithin;
+    Promise.all([
+        d3.json('/data/ptsWithin.geojson')])
+    .then(ready);
+
+    function ready(data) {
+        ptsWithin = data[0];
+    
+        function randomData(samples) {
+            var data = [],
+                random = d3.randomNormal();
+
+
+            data.push({
+               date: new Date (ptsWithin.features[0].properties.Date),
+               close: 1
+           });
+           data.push({
+               date: new Date (ptsWithin.features[10].properties.Date),
+               close: 1
+           });
+           data.push({
+               date: new Date (ptsWithin.features[20].properties.Date),
+               close: 1
+           });
+           data.push({
+               date: new Date (ptsWithin.features[30].properties.Date),
+               close: 1
+           });
+
+            //console.log(data);
+            return data;
+        }
+        e=[];
+        //var b=d3.csv("data.csv");
+        //console.log(b);
+
+
+
+        //console.log(e);
+        //var ds = randomData(170);
+        var ds = randomData(170);
+        console.log(ds);
+        //var ds =d3.csv("data.csv");
+        var margin = { top: 20, right: 20, bottom: 30, left: 50 };
+        width = 800 - margin.left - margin.right,
+        height = 50;
+
+        var x = d3.scaleLinear()
+            //.range([0, width]);
+            .domain(d3.extent(ds))
+            .range([0, width])
+            .nice();
+
+
+        var y = d3.scaleLinear()
+            .range([height, 0]);
+
+        var xAxis = d3.axisBottom(x).ticks(12),
+            yAxis = d3.axisLeft(y).ticks(12 * height / width);
+
+        var svg = d3.select("#g1").append("svg")
+                .attr("id", "g1_svg")
+                .attr("data-margin-right", margin.right)
+                .attr("data-margin-left", margin.left)
+                .attr("data-margin-top", margin.top)
+                .attr("data-margin-bottom", margin.bottom)
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        x.domain(d3.extent(ds, function (d) { return d.date; })).nice();
+        y.domain(d3.extent(ds, function (d) { return d.close; })).nice();
+
+        svg.append("g")
+        .attr("class", "x axis ")
+        .attr('id', "axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .attr('id', "axis--y")
+            .call(yAxis);
+
+        var dot = svg.selectAll(".dot")
+            .data(ds)
+        .enter().append("circle")
+            .attr("class", "dot")
+            .attr("r", 5)
+            .attr("cx", function (d) { return x(d.date); })
+            .attr("cy", function (d) { return y(d.close); })
+            .attr("opacity", 0.7)
+            .style("fill", "#4292c6");
+
+        svg.append("g")
+        .call(d3.brush().extent([[0, 0], [width, height]]).on("brush", brushed).on("end", brushended));
+
+
+        function brushed() {
+            var s = d3.event.selection,
+                x0 = s[0][0],
+                y0 = s[0][1],
+                dx = s[1][0] - x0,
+                dy = s[1][1] - y0;
+            // console.log(s);
+
+            svg.selectAll('circle')
+                .style("fill", function (d) {
+                    if (x(d.date) >= x0 && x(d.date) <= x0 + dx && y(d.close) >= y0 && y(d.close) <= y0 + dy)
+                        {
+                        console.log(d.date);
+                        return "#ec7014"; }
+                    else { return "#4292c6"; }
+                });
+        }
+
+        function brushended() {
+            if (!d3.event.selection) {
+            //console.log(x);
+                svg.selectAll('circle')
+                .transition()
+                .duration(150)
+                .ease(d3.easeLinear)
+                .style("fill", "#4292c6");
+            }
+        }
+    }
+</script>
+</body>

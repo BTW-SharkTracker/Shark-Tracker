@@ -1,3 +1,6 @@
+// JavaScript for Beneath the Waves Shark Tracker Preprocessor
+// Authors: Alexis and Felix
+
 // Declare variables
 var tracks;
 var meta;
@@ -70,7 +73,7 @@ function process() {
         .then(ready);
 
         function ready(data) {
-            // Initialize varaibles
+            // Initialize variables
             var trackIterator;
             var trackPos;
 
@@ -131,6 +134,7 @@ function process() {
 
             });
 
+            // Turn into featurecollection
             nodeFeatures = turf.featureCollection(nodeFeatures);
 
             // Remove points that are not in the ocean
