@@ -126,20 +126,20 @@ let popup =new mapboxgl.Popup();
         //     }
         // });
 
-        map.addLayer({
-            'id': 'animLines',
-            'type': 'line',
-            'source': 'lines',
-            'layout': {
-                'line-join': 'round',
-                'line-cap': 'round'
-            },
-            'paint': {
-                'line-color':"red",
-                'line-width': 1,
-            },
-            "filter": ["==", "Shark ID","106744"]
-        });
+        // map.addLayer({
+        //     'id': 'animLines',
+        //     'type': 'line',
+        //     'source': 'lines',
+        //     'layout': {
+        //         'line-join': 'round',
+        //         'line-cap': 'round'
+        //     },
+        //     'paint': {
+        //         'line-color':"red",
+        //         'line-width': 1,
+        //     },
+        //     "filter": ["==", "Shark ID","106744"]
+        // });
 
         // Add bathymetry layer
         map.addLayer(
