@@ -155,7 +155,7 @@ function ready(data) {
             .style("fill", function (d) {
                 if (xScale(d.date) >= x0 && xScale(d.date) <= x0 + dx && yScale(d.name) >= y0 && yScale(d.name) <= y0 + dy)
                     {
-                    console.log(d.date);
+                    // console.log(d.date);
                     // Add the point to the brushed point filter array
                     var currentBrushedPt = ["==","pointID", d.pointID];
                     brushedPts.push(currentBrushedPt);
