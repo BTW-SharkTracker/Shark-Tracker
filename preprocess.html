@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shark Tracker Preprocessor</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+    <link rel="stylesheet" href="css/preprocess.css">
+</head>
+
+<body>
+    <h1>Beneath the Waves Shark Tracker Data Processor</h1>
+    <p><strong>Upload the shark tracks and shark metadata CSV files:</strong></p>
+    <label for="inputTracks">Tracks File:</label>
+    <input type="file" id="inputTracks" accept="text/csv, .csv" onchange="readTracks(inputTracks)">
+    <label for="inputMeta">Meta File:</label>
+    <input type="file" id="inputMeta" accept="text/csv, .csv" onchange="readMeta(inputMeta)">
+    <div id="loadingBox" style="display: none;">
+        <p>Processing...</p>
+        <div class="loader"></div>
+    </div>
+    
+    <p id="dlExplainer" style="display: none;"><strong>Download these two files and upload them to the server, replacing the old copies in the data folder:</strong></p>
+    <input type="button" onclick="dlLines()" id="downloadLines" value="Download Lines File" style="display: none;">
+    <input type="button" onclick="dlPoints()" id="downloadPoints" value="Download Points File" style="display: none;">
+</body>
+<script src="js/preprocess.js"></script>
+</html>
