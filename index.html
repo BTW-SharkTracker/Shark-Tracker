@@ -50,23 +50,16 @@
 			var metadata = data[0];
 
 			metadata.forEach(function(d) {
-			  str += '<li'+'<strong>'+ d.Name + '</strong>'+'</li>';
-				str += '<li>'+ '    Common Name:  ' +d["Commn Name"] + '</li>';
+			  str += '<li>'+'<strong><u>'+ d.Name + '</u></strong>'+'</li>';
+				str += '<li>'+  '    Common Name:  ' +d["Commn Name"] + '</li>';
 				str += '<li>'+ '    Species:  ' +d["Species Name"] + '</li>';
 				str += '<li>'+ '    Sex:  ' +d["Sex"] + '</li>';
 				str += '<li>'+ '    Maturity:  ' +d["Maturity"] + '</li>';
 				str += '<li>'+ '    Tag Date:  ' +d["TagMonth"] +"/"+d["TagDay"]+"/"+d["TagYear"] +'</li>'+'<br>';
-
-				//console.log(d.Name);
 			});
 			str += '</ul>';
-			//console.log(str);
 			document.getElementById("menuid").innerHTML = str;
 		}
-
-//document.getElementsByClassName("menu-content").innerHTML = str;
-
-	//document.getElementById("menu-content").innerHTML = str;
 
 	</script>
 
