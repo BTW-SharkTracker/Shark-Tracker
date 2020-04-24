@@ -4,7 +4,7 @@
 
 // Import ptsWithin
 Promise.all([
-    d3.json('/final-project-sharks/data/ptsWithin.geojson')])
+    d3.json('data/ptsWithin.geojson')])
 .then(ready);
 
 function ready(data) {
