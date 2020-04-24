@@ -46,7 +46,9 @@ input:checked ~ .menu-content {
     max-height: 100%;
 }
 
-
+#colorSquares {
+  visibility: hidden;
+}
 
 
 #console {

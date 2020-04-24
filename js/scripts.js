@@ -1,4 +1,5 @@
 // JavaScript for Beneath the Waves Shark Tracker
+// Map code
 // Authors: Alexis and Felix
 
 

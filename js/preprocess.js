@@ -120,6 +120,7 @@ function process() {
                     d.TagType=tt;
                     d.TagDay=td;
                     d.TagMonth=tm;
+                    d.TagYear=ty;
                     d.Length=t;
                     d.Sex=s;
                     d.Maturity=m;

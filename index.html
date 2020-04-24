@@ -38,31 +38,6 @@
 
 	</body>
 
-	<script type="text/javascript">
-	document.getElementById("colorSquares").style.visibility = "hidden";
-
-	Promise.all([
-			d3.csv('/not_in_use_by_code/Metadata_Sharks_ToJuly31_19.csv')])
-			.then(ready);
-
-	var str='<ul>';
-	function ready(data) {
-			var metadata = data[0];
-
-			metadata.forEach(function(d) {
-			  str += '<li>'+'<strong><u>'+ d.Name + '</u></strong>'+'</li>';
-				str += '<li>'+  '    Common Name:  ' +d["Commn Name"] + '</li>';
-				str += '<li>'+ '    Species:  ' +d["Species Name"] + '</li>';
-				str += '<li>'+ '    Sex:  ' +d["Sex"] + '</li>';
-				str += '<li>'+ '    Maturity:  ' +d["Maturity"] + '</li>';
-				str += '<li>'+ '    Tag Date:  ' +d["TagMonth"] +"/"+d["TagDay"]+"/"+d["TagYear"] +'</li>'+'<br>';
-			});
-			str += '</ul>';
-			document.getElementById("menuid").innerHTML = str;
-		}
-
-	</script>
-
 	<script src="js/scripts.js"></script>
 	<script src="js/scatterplot.js"></script>
 </html>

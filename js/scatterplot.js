@@ -1,27 +1,58 @@
+// JavaScript for Beneath the Waves Shark Tracker
+// Scatterplot and Shark info box code
+// Authors: Alexis and Felix
+
 // Import ptsWithin
 Promise.all([
     d3.json('/data/ptsWithin.geojson')])
 .then(ready);
 
 function ready(data) {
-  var coll = document.getElementsByClassName("collapsible");
-  var i;
-
-  for (i = 0; i < coll.length; i++) {
-    coll[i].addEventListener("click", function() {
-      this.classList.toggle("active");
-      var scatterplot = this.nextElementSibling;
-      if (scatterplot.style.display === "block") {
-        scatterplot.style.display = "none";
-      } else {
-        scatterplot.style.display = "block";
-      }
-    });
-  }
     // Initialize Variables
     var ptsWithin = data[0];
     var minDate = new Date (ptsWithin.features[0].properties.Date);
     var maxDate = new Date (ptsWithin.features[0].properties.Date);
+    var str='<ul>';
+    var coll = document.getElementsByClassName("collapsible");
+    var collIterator;
+
+    // Collapsible-menu code
+    for (collIterator = 0; collIterator < coll.length; collIterator++) {
+        coll[collIterator].addEventListener("click", function() {
+          this.classList.toggle("active");
+          var scatterplot = this.nextElementSibling;
+          if (scatterplot.style.display === "block") {
+            scatterplot.style.display = "none";
+          } else {
+            scatterplot.style.display = "block";
+          }
+        });
+    }
+
+    // Fill in Shark Info box
+    for (let infoIterator = 0; infoIterator < ptsWithin.features.length; infoIterator++) {
+        if (infoIterator > 0 && ptsWithin.features[infoIterator].properties['Shark ID'] == ptsWithin.features[infoIterator-1].properties['Shark ID']) {
+            // do nothing
+        } else {
+            var infoSpecies = ptsWithin.features[infoIterator].properties.Species;
+            var infoCommon = ptsWithin.features[infoIterator].properties.CommonName;
+            var infoName = ptsWithin.features[infoIterator].properties.Name;
+            var infoSex = ptsWithin.features[infoIterator].properties.Sex;
+            var infoMaturity = ptsWithin.features[infoIterator].properties.Maturity;
+            var infoMonth = ptsWithin.features[infoIterator].properties.TagMonth;
+            var infoDay = ptsWithin.features[infoIterator].properties.TagDay;
+            var infoYear = ptsWithin.features[infoIterator].properties.TagYear;
+
+            str += '<li>'+'<strong><u>'+ infoName + '</u></strong>'+'</li>';
+            str += '<li>'+  '    Common Name:  ' +infoCommon + '</li>';
+            str += '<li>'+ '    Species:  ' +infoSpecies + '</li>';
+            str += '<li>'+ '    Sex:  ' +infoSex + '</li>';
+            str += '<li>'+ '    Maturity:  ' +infoMaturity + '</li>';
+            str += '<li>'+ '    Tag Date:  ' +infoMonth +"/"+infoDay+"/"+infoYear +'</li>'+'<br>';
+        }
+    }
+    str += '</ul>';
+    document.getElementById("menuid").innerHTML = str;
 
     // Push all dates to x and set y to shark ID / name, check for min and max date
     var scatterPts = [];
