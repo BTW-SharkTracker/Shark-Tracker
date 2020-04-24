@@ -357,8 +357,8 @@ let popup =new mapboxgl.Popup();
             'type': 'circle',
             'source': 'Sharks',
             'paint': {
-                'circle-radius': 5,
-                'circle-color': '#ffff00'},
+                'circle-radius': 4,
+                'circle-color': '#ffd300'},
                 // Default filter that makes sure none show
                 "filter":["any", ["==","pointID", 0]
             ]});

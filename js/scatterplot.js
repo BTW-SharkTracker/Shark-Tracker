@@ -159,7 +159,7 @@ function ready(data) {
                     // Add the point to the brushed point filter array
                     var currentBrushedPt = ["==","pointID", d.pointID];
                     brushedPts.push(currentBrushedPt);
-                    return "#ffff00"; }
+                    return "#ffd300"; }
                 else { return d.color }
             });
         // Call map updater
