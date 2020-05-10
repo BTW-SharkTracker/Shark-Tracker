@@ -1,20 +1,9 @@
 # final-project-sharks
-Milestone 4: Status Update
+Instructions for Use
 
 - The project in its current iteration is live at: https://au-cs-infovis-spring20.github.io/final-project-sharks/
-- Images of Current Interface: ![](Capture.PNG)
-- Modifications to Proposed Implementation: 
-  - We have made several changes based on the recommendations we received during the midterm presentation. In order to increase the complexity of the project and provide more meaningful interaction, the user will be able to select tracks dragging a bounding box over a section of the map. 
-  - The user will also be able to filter all tracks on the map by limiting the dates shown. The same functionality of filtering by species and animating a sharks path will still be implemented. Depending on the feasibility of animating multiple tracks at once, this may also be implemented. 
-  - We are primarily using Mapbox GL JS and will likely utilize Turf in order to remove points that fall on land. We initially planned to use d3 in some way, but have not needed it thus far.
-- Milestones and Schedule:
-    - Our initial schedule:
-        -   3/20: Preprocess the data, display map with bathysphere data
-            3/27: Getting shark nodes on there with links
-            3/27: Class Milestone 4, Status Update
-            4/10: Refine visual of the links/nodes, filters
-            4/17: Animation, UI
-            4/17-4/20: Troubleshooting/Final Revisions
-            4/21: Class Milestone 5, Final Product & Presentation
-    - We are relatively on schedule currently. We have the bathysphere data, nodes, and some degree of filtering in place. We initially planned on having the links done by now, but filtering the nodes took longer than expected. Our next steps are continuing to work with filtering the nodes, especially from land, as well as adding links and updating the overall appearance.
-    - We do still need to add in links and get the filtering working better than it is currently.
+- Preprocessing explaination->
+- In previous iterations, we used the csv files directly (the metadata and tracks spreadsheets). However this made the reload time very slow. Instead, the above preprocessing steps were used to generate json files which the page uses. This means the preprocessing will only need run when there is new data.
+- Our implementation allows the user to filter the tracks by species, zoom in and click on individual pings to get more information, and use the second view which is the lower half of the page to filter further. This view allows the user to brush over the tracks and filter the map to highlight the selected tracks. We were having a bit of difficulty getting this view to be either collapsible, or overlap with the map, but including that would help the overall appearance and ease of use of the page.
+- We started the code to animate the tracks which has been commented out, but might be useful when trying to add this feature.
+- In addition to using Mapbox GL JS, we also used d3 and turf to create the map/layers. Please use our implementation freely for any future iterations of this project!
